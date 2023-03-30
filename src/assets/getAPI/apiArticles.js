@@ -12,8 +12,7 @@ const getDataArticles = {
    } catch (error) {
      console.log(error)
    }
-   },
-   
+   }
  }
  
  export default getDataArticles 

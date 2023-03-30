@@ -9,7 +9,7 @@ const { dataProducts, isDataLoading } = storeToRefs(productsData);
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
 const showData = ref([]);
-getProducts()
+getProducts();
 watch(dataProducts, (newValue) => {
   showData.value = newValue.products
 })

@@ -1,8 +1,8 @@
 <script setup>
-import { onMounted } from "vue-demi";
-  let scrollY = 0;
+import { onMounted, ref } from "vue";
+  const scrollY = ref(0);
   function scrollWatch () {
-      scrollY = window.scrollY
+      scrollY.value = window.scrollY
     }
   onMounted(()=>{
     window.addEventListener('scroll', scrollWatch)

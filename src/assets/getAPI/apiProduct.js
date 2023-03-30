@@ -10,7 +10,7 @@ const getDataProducts = {
   } catch (error) {
     console.log(error)
   }
-  },
+  }
   
 }
 
