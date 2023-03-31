@@ -17,13 +17,12 @@ function runAnimation(){
   const animationDuration = 3000;
   setInterval(() => {
       animationAction.value += 1
-      console.log(animationAction.value);
       }, animationDuration)
 }
 
 const bannerImages = ref(null);
 const scrollY = ref(0);
-function scrollhandler ()
+function scrollHandler ()
  {
       scrollY.value = window.scrollY;
     }
@@ -34,10 +33,10 @@ onMounted(()=>{
   bannerImagesLength.value = bannerImages.value.children.length;
 
   runAnimation();
-  window.addEventListener('scroll', scrollhandler);
+  window.addEventListener('scroll', scrollHandler);
 });
 onUnmounted(()=>{
-  window.addEventListener('scroll', scrollhandler);
+  window.addEventListener('scroll', scrollHandler);
 })
 // export default {
 //   data () {

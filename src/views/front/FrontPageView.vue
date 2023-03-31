@@ -1,12 +1,28 @@
 <script setup>
-import { onMounted, ref } from "vue";
-  const scrollY = ref(0);
-  function scrollWatch () {
-      scrollY.value = window.scrollY
-    }
-  onMounted(()=>{
-    window.addEventListener('scroll', scrollWatch)
-  })
+import { storeToRefs } from 'pinia';
+import { onMounted, ref } from 'vue';
+import { useGetCartsStore } from '../../stores/useGetCart';
+
+import CartCanvass from '../../components/front/CartCanvass.vue';
+
+const cartStore = useGetCartsStore();
+const { getCarts } = cartStore;
+const { cartData, cartLength} = storeToRefs(cartStore);
+
+const scrollY = ref(0);
+function scrollHandler () {
+  scrollY.value = window.scrollY
+}
+const guestCartRef = ref(null);
+function guestOpenCart() {
+  guestCartRef.value.cartOpen();
+}
+onMounted(()=>{
+  window.addEventListener('scroll', scrollHandler);
+  getCarts();
+  console.log(guestCartRef.value);
+})
+
 </script>
 <template>
   <div class="d-flex flex-column" style="min-height:100vh">
@@ -62,6 +78,7 @@ import { onMounted, ref } from "vue";
           </div>
         </div>
       </nav>
+      
       <RouterView />
     </div>
     <div class="from-group footerSticky">
@@ -76,7 +93,7 @@ import { onMounted, ref } from "vue";
       </div>
     </div>
   </div>
-  <!-- <CartCanvass ref="guestCart" /> -->
+  <CartCanvass ref="guestCartRef" />
 </template>
 <style lang="scss" scoped>
  @font-face {

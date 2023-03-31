@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
 
-import getDataProducts from '../assets/getAPI/apiGetData.js'
+import getDataProducts from '../assets/getAPI/apiProduct'
 const { getData } = getDataProducts;
 
 export const useGetProductsStore = defineStore('storeProducts', ()=>{

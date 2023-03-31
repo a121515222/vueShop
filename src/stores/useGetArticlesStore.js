@@ -1,15 +1,15 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
 
-import getDataArticles from '../assets/getAPI/apiGetData.js'
-const { getData } = getDataArticles;
+import apiArticles from '../assets/getAPI/apiArticles'
+const { getData } = apiArticles;
 
 export const useGetArticlesStore = defineStore('storeArticles', ()=>{
   const dataArticles = ref([]);
   async function getArticles(){
     try {
       const resData = await getData();
-      dataArticles.value = resData
+      dataArticles.value = resData;
     } catch (error) {
       console.log(error)
     }
@@ -17,6 +17,6 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
 
   return{
     dataArticles,
-    getArticles
+    getArticles,
   }
 })

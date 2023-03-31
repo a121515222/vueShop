@@ -3,7 +3,7 @@ import apiVar from './apiVar.js'
 const { api, path } = apiVar
 
 
-const getDataArticles = {
+const apiArticles = {
   async getData(){
    try {
      const data = await axios.get(`${api}/api/${path}/articles`);
@@ -15,4 +15,4 @@ const getDataArticles = {
    }
  }
  
- export default getDataArticles 
+ export default apiArticles 
