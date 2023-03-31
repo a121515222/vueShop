@@ -13,14 +13,18 @@ const scrollY = ref(0);
 function scrollHandler () {
   scrollY.value = window.scrollY
 }
-const guestCartRef = ref(null);
+
 function guestOpenCart() {
-  guestCartRef.value.cartOpen();
+  cartRef.value.cartOpen();
 }
+const cartRef = ref(null);
+const input = ref(null);
+
 onMounted(()=>{
   window.addEventListener('scroll', scrollHandler);
   getCarts();
-  console.log(guestCartRef.value);
+  console.log("input",input.value)
+  console.log("offcanvas",cartRef.value);
 })
 
 </script>
@@ -93,7 +97,9 @@ onMounted(()=>{
       </div>
     </div>
   </div>
-  <CartCanvass ref="guestCartRef" />
+  <input ref="input">
+  <CartCanvass ref="cartRef" />
+  
 </template>
 <style lang="scss" scoped>
  @font-face {

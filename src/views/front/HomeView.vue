@@ -208,7 +208,7 @@ onUnmounted(()=>{
   </div>
   <div class="container my-3">
     <div class="row">
-      <template v-for="(item, index) in products" :key ="item.title+index">
+      <template v-for="(item, index) in dataProducts.products" :key ="item.title+index">
         <div class="card flex-md-row flex-md-row-cross cardHover px-sm-0"
         v-if="item.title === '澳洲茶樹精油-5ml'">
           <div class="col-12 col-md-6">

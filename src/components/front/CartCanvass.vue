@@ -10,6 +10,11 @@ const cartStore = useGetCartsStore();
 const { getCarts } = cartStore;
 const { cartData, cartLength} = storeToRefs(cartStore)
 
+defineExpose({
+  cartOpen,
+  cartClose
+})
+
 function cartOpen() {
       getCarts()
       bsOffcanvas.value.show()
