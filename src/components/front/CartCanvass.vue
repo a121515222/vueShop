@@ -106,70 +106,7 @@ onMounted(()=>{
   bsOffcanvas.value = new BsOffcanvas(rightCartRef.value);
   getCarts();
 });
-// export default {
-//   data () {
-//     return {
-//       bsOffcanvas: '',
-//       changeNum: 1,
-//       cartId: ''
-//     }
-//   },
-//   components: {
-//     GuestCoupon
-//   },
-//   computed: {
-//     ...mapState(cartStore, ['cartData', 'cartLength', 'isCartLoading', 'isChangeNum'])
-//   },
-//   emits: ['push-info', 'push-cart-num'],
-//   methods: {
-//     ...mapActions(cartStore, ['getCart', 'deleteAllCarts', 'deleteCart', 'editCart', 'isCartLoadingTrue', 'isChangeNumTrue']),
-//     toProducts () {
-//       this.$router.push('/products')
-//       this.cartClose()
-//     },
-//     toPayProcess () {
-//       if (this.isChangeNum === true) {
-//         alert('請完成購物車數量修改')
-//       } else { this.$router.push('/sendInfo') }
-//     },
-//     changeCartNum (num, id, productId) {
-//       if (this.isChangeNum === false) {
-//         this.isChangeNumTrue()
-//         this.changeNum = num
-//         this.cartId = id
-//       } else if (this.isChangeNum === true) {
-//         this.isCartLoadingTrue()
-//         const sendCart = {
-//           data: {
-//             product_id: '',
-//             qty: 1
-//           }
-//         }
-//         sendCart.data.product_id = productId
-//         sendCart.data.qty = this.changeNum
-//         this.editCart(id, sendCart)
-//       }
-//     },
-//     cartOpen () {
-//       this.getCart()
-//       this.bsOffcanvas.show()
-//     },
-//     cartClose () {
-//       this.bsOffcanvas.hide()
-//     }
-//   },
-//   watch: {
-//     changeNum (nweValue, oldValue) {
-//       if (nweValue <= 0) {
-//         alert('輸入數量不可小於1')
-//         this.changeNum = oldValue
-//       }
-//     }
-//   },
-//   mounted () {
-//     this.bsOffcanvas = new BsOffcanvas(this.$refs.rightCart)
-//   }
-// }
+
 </script>
 <template>
   <div class="offcanvas offcanvas-end" style="width:700px;" data-bs-scroll="true" data-bs-backdrop="false"
