@@ -1,14 +1,16 @@
 <script setup>
 import BsOffcanvas from 'bootstrap/js/dist/offcanvas'
 import GuestCoupon from './GuestCoupon.vue'
-// 用option API需要先匯入mapState
 import { storeToRefs } from 'pinia'
 import { useGetCartsStore } from '../../stores/useGetCart'
+import { useInfoStore } from '../../stores/useInfoStore'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 const cartStore = useGetCartsStore();
-const { getCarts, editCart, cartIsLoading, numIsChanging } = cartStore;
+const { getCarts, editCart, deleteCart, deleteAllCart, cartIsLoading, numIsChanging } = cartStore;
 const { cartData, cartLength, isCartLoading, isChangeNum} = storeToRefs(cartStore)
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
 
 defineExpose({
   cartOpen,
@@ -35,7 +37,7 @@ function toPayProcess() {
 
 const changeNum = ref(0);
 const cartId = ref('');
-function changeCartNum(num, id, productId) {
+async function changeCartNum(num, id, productId) {
   if (isChangeNum.value === false) {
     numIsChanging();
       changeNum.value = num;
@@ -50,7 +52,46 @@ function changeCartNum(num, id, productId) {
     }
     sendCart.data.product_id = productId;
     sendCart.data.qty = changeNum.value;
-    editCart(id, sendCart);
+    const res = await editCart(id, sendCart);
+    cartChangeInfo(res);
+  }
+}
+async function deleteCarts(id, title){
+  const res = await deleteCart(id);
+  cartChangeInfo(res, title);
+}
+async function deleteAllCarts(){
+  const res = await deleteAllCart();
+  cartChangeInfo(res);
+}
+function cartChangeInfo(res, title){
+  switch (res) {
+    case '已更新購物車':
+      addMessage(
+        {
+          title: '編輯購物車結果',
+          style: 'success',
+          content: res
+        }
+      )
+      break;
+    case '已刪除':
+      addMessage(
+        {
+          title: '編輯購物車結果',
+          style: 'success',
+          content:`${res} ${title === undefined ? '所有購物車內容' : title}` 
+        }
+      )
+      break;
+    default:
+      addMessage(
+        {
+          title: '編輯購物車結果',
+          style: 'danger',
+          content: res
+        }
+      )
   }
 }
 watch(changeNum, (newValue,oldValue)=>{
@@ -198,7 +239,7 @@ onMounted(()=>{
                     {{isChangeNum && item.id === cartId?  '確定':'編輯' }}
                   </button>
                   <button class="d-block-576-button btn btn-outline-dark" type="button"
-                  @click="deleteCart(item.id)"
+                  @click="deleteCarts(item.id, item.product.title)"
                   :disabled="isCartLoading" :class="{buttonDisabledCursor:isCartLoading}"
                   >
                     刪除
@@ -206,7 +247,7 @@ onMounted(()=>{
                 </td>
                 <td class="d-none-576">
                   <button type="button" class=" btn btn-outline-dark"
-                  @click="deleteCart(item.id, item.product.title)"
+                  @click="deleteCarts(item.id, item.product.title)"
                   :disabled="isCartLoading" :class="{buttonDisabledCursor:isCartLoading}"
                   >
                     刪除
@@ -223,7 +264,7 @@ onMounted(()=>{
        </table>
       <div class="align-self-end d-flex gap-5 px-3">
         <p class="text-center fw-bold">小計</p>
-        <p class="text-center">{{ Math.floor(cartData[0]?.final_total) }}元</p>
+        <p class="text-center">{{ cartData[0]?.final_total === undefined ? '0' : Math.floor(cartData[0]?.final_total)}}元</p>
       </div>
       <div class="align-self-end pb-1">
         <button type="button" class="btn btn-primary text-white" @click="toPayProcess(); cartClose()"
