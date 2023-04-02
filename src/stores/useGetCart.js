@@ -2,27 +2,51 @@ import { defineStore } from 'pinia'
 import apiCarts from '../assets/getAPI/apiCarts'
 import { useToastStore } from './useToast'
 import { computed, ref } from 'vue'
-const { getData, deleteAllData, deleteData, putData } = apiCarts;
+const { getData, deleteAllData, deleteData, editData } = apiCarts;
 export const useGetCartsStore = defineStore('storeCarts', ()=>{
   const cartData = ref([]);
   const cartLength = ref(0);
-  let isCartLoaded = false;
-  let isChangeNum = false;
+  const isCartLoading = ref(false);
+  const isChangeNum = ref(false);
 
   async function getCarts(){
     try {
       const resData = await getData();
       cartData.value = resData;
       cartLength.value = resData.length;
-      
     } catch (error) {
       console.log(error)
     }
   }
+
+  async function editCart(id, sendData) {
+    try {
+      const resData = await editData(id, sendData);
+      isChangeNum.value = false;
+      isCartLoading.value = false;
+      getCarts();
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function cartIsLoading() {
+    isCartLoading.value = true;
+  }
+
+  function numIsChanging() {
+    isChangeNum.value = true;
+  }
   return{
     getCarts,
+    editCart,
+    cartIsLoading,
+    numIsChanging,
     cartData,
     cartLength,
+    isCartLoading,
+    isChangeNum
+
   }
 });
 // export default defineStore('cartStore', {

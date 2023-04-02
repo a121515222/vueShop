@@ -15,7 +15,7 @@
     "bootstrap-icons": "^1.9.1",
     "pinia": "^2.0.21",
     "sass": "^1.54.9",
-    "vee-validate": "^4.6.9",
+    "vee-validate": "^4.8.4",
     "vue": "^3.2.38",
     "vue-loading-overlay": "^5.0.3",
     "vue-router": "^4.1.5"

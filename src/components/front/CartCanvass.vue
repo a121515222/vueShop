@@ -1,14 +1,14 @@
 <script setup>
 import BsOffcanvas from 'bootstrap/js/dist/offcanvas'
-// import GuestCoupon from '@/components/GuestCoupon.vue'
+import GuestCoupon from './GuestCoupon.vue'
 // 用option API需要先匯入mapState
-import { mapState, mapActions, storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia'
 import { useGetCartsStore } from '../../stores/useGetCart'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const cartStore = useGetCartsStore();
-const { getCarts } = cartStore;
-const { cartData, cartLength} = storeToRefs(cartStore)
+const { getCarts, editCart, cartIsLoading, numIsChanging } = cartStore;
+const { cartData, cartLength, isCartLoading, isChangeNum} = storeToRefs(cartStore)
 
 defineExpose({
   cartOpen,
@@ -18,16 +18,42 @@ defineExpose({
 function cartOpen() {
       getCarts()
       bsOffcanvas.value.show()
-    }
+}
 function cartClose() {
       bsOffcanvas.value.hide()
-    }
+}
 
+const changeNum = ref(0);
+const cartId = ref('');
+function changeCartNum(num, id, productId) {
+  if (isChangeNum.value === false) {
+    numIsChanging();
+      changeNum.value = num;
+      cartId.value = id;
+    } else if (isChangeNum.value === true) {
+      cartIsLoading();
+      const sendCart = {
+        data: {
+          product_id: '',
+          qty: 1
+        }
+      }
+      sendCart.data.product_id = productId;
+      sendCart.data.qty = changeNum.value;
+      console.log("send", sendCart)
+      editCart(id, sendCart);
+    }
+}
+watch(changeNum, (newValue,oldValue)=>{
+        if (newValue <= 0) {
+        alert('輸入數量不可小於1');
+        changeNum.value = oldValue;
+      }
+});
 const rightCartRef = ref();
 const bsOffcanvas = ref(null);
 onMounted(()=>{
   bsOffcanvas.value = new BsOffcanvas(rightCartRef.value);
-  console.log("test canvas")
   getCarts();
 });
 // export default {
@@ -146,7 +172,7 @@ onMounted(()=>{
                   {{item.qty}}
                 </td>
                 <td v-if="isChangeNum && item.id === cartId" style="min-width:48px">
-                  <input class="form-control specialWidth" type="number" min="1" max="100" v-model.lazy="changeNum"></td>
+                  <input class="form-control specialWidth" type="number" min="1" max="100" v-model="changeNum"></td>
                 <td style="text-align:center;">
                   {{item.product.origin_price>item.product.price === false?  item.product.origin_price:item.product.price}}
                 </td>
@@ -156,11 +182,12 @@ onMounted(()=>{
                   :class="{buttonDisabledCursor:isCartLoading}"
                   @click="changeCartNum(item.qty, item.id, item.product_id)"
                   >
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                  v-show="isCartLoading"
-                  >
-                  </span>
-                  {{isChangeNum && item.id === cartId?  '確定':'編輯' }}</button>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                    v-show="isCartLoading"
+                    >
+                    </span>
+                    {{isChangeNum && item.id === cartId?  '確定':'編輯' }}
+                  </button>
                   <button class="d-block-576-button btn btn-outline-dark" type="button"
                   @click="deleteCart(item.id)"
                   :disabled="isCartLoading" :class="{buttonDisabledCursor:isCartLoading}"
@@ -187,7 +214,7 @@ onMounted(()=>{
        </table>
       <div class="align-self-end d-flex gap-5 px-3">
         <p class="text-center fw-bold">小計</p>
-        <p class="text-center">{{Math.floor(cartData.final_total)}}元</p>
+        <p class="text-center">{{ Math.floor(cartData[0]?.final_total) }}元</p>
       </div>
       <div class="align-self-end pb-1">
         <button type="button" class="btn btn-primary text-white" @click="toPayProcess(); cartClose()"
@@ -195,7 +222,7 @@ onMounted(()=>{
       </div>
       <template v-if="cartLength > 0">
         <div style="min-width:342px" class="my-3">
-          <GuestCoupon :cart-length="cartLength" :cart-loading="isCartLoading" @getCart= "getCart"></GuestCoupon>
+          <GuestCoupon :cart-length="cartLength" :cart-loading="isCartLoading" @getCarts= "getCarts"></GuestCoupon>
         </div>
       </template>
       <template v-else>
@@ -223,9 +250,9 @@ onMounted(()=>{
     }
   }
   .d-block-576-button {
-    display: block;
+    display: block !important;
     @media (min-width:576px) {
-      display: none;
+      display: none !important;
     }
   }
   .d-block-576 {
@@ -235,7 +262,7 @@ onMounted(()=>{
     }
   }
   .d-none-576 {
-    display: none;
+    display: none ; 
     @media (min-width:576px) {
       display: table-cell;
     }

@@ -23,8 +23,6 @@ const input = ref(null);
 onMounted(()=>{
   window.addEventListener('scroll', scrollHandler);
   getCarts();
-  console.log("input",input.value)
-  console.log("offcanvas",cartRef.value);
 })
 
 </script>

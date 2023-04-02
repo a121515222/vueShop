@@ -13,21 +13,24 @@ const apiCarts = {
   },
   async deleteAllData(){
     try {
-      const data = await axios.delete(`${api}/api/${path}/carts`)
+      const data = await axios.delete(`${api}/api/${path}/carts`);
+      return data.data.data.carts;
     } catch (error) {
       console.log(error);
     }
   },
   async deleteData(id){
     try {
-      const data = await axios.delete(`${api}/api/${path}/cart/${id}`)
+      const data = await axios.delete(`${api}/api/${path}/cart/${id}`);
+      return data.data.data.carts;
     } catch (error) {
       console.log(error);
     }
   },
-  async putData(id){
+  async editData(id, sendData){
     try {
-      const data = await axios.put(`${api}/api/${path}/cart/${id}`)
+      const data = await axios.put(`${api}/api/${path}/cart/${id}`, sendData);
+      return data.data.data.carts;
     } catch (error) {
       console.log(error);
     }
