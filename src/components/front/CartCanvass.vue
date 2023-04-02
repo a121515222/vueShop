@@ -5,7 +5,7 @@ import GuestCoupon from './GuestCoupon.vue'
 import { storeToRefs } from 'pinia'
 import { useGetCartsStore } from '../../stores/useGetCart'
 import { onMounted, ref, watch } from 'vue'
-
+import { useRouter } from 'vue-router'
 const cartStore = useGetCartsStore();
 const { getCarts, editCart, cartIsLoading, numIsChanging } = cartStore;
 const { cartData, cartLength, isCartLoading, isChangeNum} = storeToRefs(cartStore)
@@ -23,6 +23,16 @@ function cartClose() {
       bsOffcanvas.value.hide()
 }
 
+const router = useRouter();
+
+function toProducts() {
+      router.push('/products');
+      cartClose();
+    }
+function toPayProcess() {
+  isChangeNum.value === true ? alert('請完成購物車數量修改') : router.push('/sendInfo')
+}
+
 const changeNum = ref(0);
 const cartId = ref('');
 function changeCartNum(num, id, productId) {
@@ -30,19 +40,18 @@ function changeCartNum(num, id, productId) {
     numIsChanging();
       changeNum.value = num;
       cartId.value = id;
-    } else if (isChangeNum.value === true) {
-      cartIsLoading();
-      const sendCart = {
-        data: {
-          product_id: '',
-          qty: 1
-        }
+  } else if (isChangeNum.value === true) {
+    cartIsLoading();
+    const sendCart = {
+      data: {
+        product_id: '',
+        qty: 1
       }
-      sendCart.data.product_id = productId;
-      sendCart.data.qty = changeNum.value;
-      console.log("send", sendCart)
-      editCart(id, sendCart);
     }
+    sendCart.data.product_id = productId;
+    sendCart.data.qty = changeNum.value;
+    editCart(id, sendCart);
+  }
 }
 watch(changeNum, (newValue,oldValue)=>{
         if (newValue <= 0) {
