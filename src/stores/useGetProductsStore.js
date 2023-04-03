@@ -7,23 +7,23 @@ const { getData, getSingleData } = apiProducts;
 export const useGetProductsStore = defineStore('storeProducts', ()=>{
   const dataProducts = ref([]);
   const dataProduct = ref([]);
-  let isDataLoading = false;
+  let isDataLoading = ref(false);
   async function getProducts(){
     try {
-      isDataLoading = true;
+      isDataLoading.value = true;
       const resData = await getData();
       dataProducts.value = resData;
-      isDataLoading = false;
+      isDataLoading.value = false;
     } catch (error) {
       console.log(error)
     }
   }
   async function getProduct(id){
     try {
-      isDataLoading = true;
+      isDataLoading.value = true;
       const resData = await getSingleData(id);
-      dataProduct.value = resData;
-      console.log(resData);
+      dataProduct.value = resData.data.product;
+      isDataLoading.value = false;
     } catch (error) {
       console.log(error)
     }

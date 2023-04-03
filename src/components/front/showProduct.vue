@@ -87,25 +87,26 @@ onMounted(()=>{
                   <span>/{{item.unit}}</span>
                 </div>
                 <button class="btn btn-outline-secondary text-primary w-100 mb-1" type="button"
-                  @click.stop.prevent="guestProductDetail(item.id)" :disabled="item.id === isDataLoading"
+                  @click.stop.prevent="guestProductDetail(item.id)" 
+                  :disabled=isDataLoading
                   :class="{buttonDisabledCursor : item.id === isDataLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    v-show="item.id === isDataLoading">
+                    v-show=isDataLoading>
                   </span>
                   快速商品資訊
                 </button>
                 <RouterLink class="btn btn-outline-secondary text-primary w-100 mb-1" :to="`/product/${item.id}`"
-                  @click="inspectId(item.id);" :disabled="item.id === isDataLoading"
+                  @click="inspectId(item.id);" :disabled=isDataLoading
                   :class="{buttonDisabledCursor : item.id === isDataLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    v-show="item.id === isDataLoading">
+                    v-show=isDataLoading>
                   </span>商品詳細資訊
                 </RouterLink>
                 <button class="btn btn-primary w-100 text-secondary" type="button"
-                  @click.stop.prevent="guestAddCart(item.id,item.title)" :disabled="item.id === isDataLoading"
+                  @click.stop.prevent="guestAddCart(item.id,item.title)" :disabled=isDataLoading
                   :class="{buttonDisabledCursor : item.id === isDataLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    v-show="item.id === isDataLoading">
+                    v-show=isDataLoading>
                   </span>
                   加到購物車
                 </button>

@@ -14,7 +14,6 @@ const apiProducts = {
   async getSingleData(id) {
     try {
       const data = await axios.get(`${api}/api/${path}/product/${id}`);
-      console.log('product',data)
       return data
     } catch (error) {
       console.log(error);
