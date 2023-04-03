@@ -19,10 +19,10 @@ defineExpose({
 
 function cartOpen() {
       getCarts()
-      bsOffcanvas.value.show()
+      bsOffcanvas.value.show();
 }
 function cartClose() {
-      bsOffcanvas.value.hide()
+      bsOffcanvas.value.hide();
 }
 
 const router = useRouter();

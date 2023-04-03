@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
 
-import getDataProducts from '../assets/getAPI/apiProduct'
-const { getData } = getDataProducts;
+import apiProducts from '../assets/getAPI/apiProduct'
+const { getData, getSingleData } = apiProducts;
 
 export const useGetProductsStore = defineStore('storeProducts', ()=>{
   const dataProducts = ref([]);
-  let isDataLoading = false
+  const dataProduct = ref([]);
+  let isDataLoading = false;
   async function getProducts(){
     try {
       isDataLoading = true;
@@ -17,10 +18,22 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
       console.log(error)
     }
   }
-
+  async function getProduct(id){
+    try {
+      isDataLoading = true;
+      const resData = await getSingleData(id);
+      dataProduct.value = resData;
+      console.log(resData);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+    
   return{
     dataProducts,
+    dataProduct,
     isDataLoading,
-    getProducts
+    getProducts,
+    getProduct
   }
 })

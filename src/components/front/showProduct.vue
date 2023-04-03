@@ -1,15 +1,17 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { useGetProductsStore } from '../../stores/useGetProductsStore.js';
+import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import { useInfoStore } from '../../stores/useInfoStore';
 import { onMounted, ref, watch } from 'vue-demi';
+import GuestProductModal from '../../components/front//GuestProductModal.vue';
+
 const productsData = useGetProductsStore();
 const { getProducts } = productsData
 const { dataProducts, isDataLoading } = storeToRefs(productsData);
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
 const showData = ref([]);
-getProducts();
+
 watch(dataProducts, (newValue) => {
   showData.value = newValue.products
 })
@@ -17,7 +19,7 @@ const favorites = ref(JSON.parse(localStorage.getItem('myFavoritesItem')) || [])
 function addFavorites(id, title) {
   favorites.value.push(id)
   localStorage.setItem('myFavoritesItem', JSON.stringify(favorites.value))
-  this.addMessage(
+  addMessage(
     {
       title: '加入最愛結果',
       style: 'success',
@@ -29,7 +31,7 @@ function deleteFavorites(id, title) {
   const indexRemove = favorites.value.indexOf(id)
   favorites.value.splice(indexRemove, 1)
   localStorage.setItem('myFavoritesItem', JSON.stringify(favorites.value))
-  this.addMessage(
+  addMessage(
     {
       title: '移除最愛結果',
       style: 'success',
@@ -37,7 +39,14 @@ function deleteFavorites(id, title) {
     }
   )
 }
-
+const productModalRef = ref(null);
+function guestProductDetail(id){
+  productModalRef.value.modalOpen(id)
+}
+function guestAddCart(){}
+onMounted(()=>{
+  getProducts();
+})
 </script>
 <template>
   <div class="row pt-3">
@@ -110,6 +119,7 @@ function deleteFavorites(id, title) {
       <h2 class="mx-auto">搜尋不到東西</h2>
     </template>
   </div>
+  <GuestProductModal ref="productModalRef"/> 
 </template>
 <style>
 

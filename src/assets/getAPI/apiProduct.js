@@ -2,17 +2,25 @@ import axios from 'axios';
 import apiVar from './apiVar.js'
 const { api, path } = apiVar
 
-const getDataProducts = {
+const apiProducts = {
  async getData(){
   try {
     const data = await axios.get(`${api}/api/${path}/products/all`);
     return data.data
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
+  },
+  async getSingleData(id) {
+    try {
+      const data = await axios.get(`${api}/api/${path}/product/${id}`);
+      console.log('product',data)
+      return data
+    } catch (error) {
+      console.log(error);
+    }
   }
-  
 }
 
-export default getDataProducts 
+export default apiProducts 
 
