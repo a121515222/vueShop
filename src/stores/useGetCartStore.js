@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import apiCarts from '../assets/getAPI/apiCarts'
 import { ref } from 'vue'
-const { getData, deleteAllData, deleteData, editData } = apiCarts;
-export const useGetCartsStore = defineStore('storeCarts', ()=>{
+const { getData, addData, deleteAllData, deleteData, editData } = apiCarts;
+export const useGetCartStore = defineStore('storeCarts', ()=>{
   const cartData = ref([]);
   const cartLength = ref(0);
   const isCartLoading = ref(false);
@@ -16,6 +16,17 @@ export const useGetCartsStore = defineStore('storeCarts', ()=>{
       return resData;
     } catch (error) {
       console.error(error);
+      return error.response.data.message;
+    }
+  }
+  async function addCart(sendData){
+    try {
+      const resData = await addData(sendData);
+      getCarts();
+      return resData;
+    } catch (error) {
+      console.error(error);
+      return error.response.data.message;
     }
   }
   async function editCart(id, sendData) {
@@ -60,6 +71,7 @@ export const useGetCartsStore = defineStore('storeCarts', ()=>{
   return{
     getCarts,
     editCart,
+    addCart,
     deleteCart,
     deleteAllCart,
     cartIsLoading,
@@ -68,6 +80,5 @@ export const useGetCartsStore = defineStore('storeCarts', ()=>{
     cartLength,
     isCartLoading,
     isChangeNum
-
   }
 });

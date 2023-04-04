@@ -11,6 +11,15 @@ const apiCarts = {
       console.error(error);
     }
   },
+  async addData(sendData){
+    console.log('addData sendDATA',sendData);
+    try {
+      const data = await axios.post(`${api}/api/${path}/cart`, sendData);
+      return data
+    } catch (error) {
+      console.error(error);
+    }
+  },
   async deleteAllData(){
     try {
       const data = await axios.delete(`${api}/api/${path}/carts`);

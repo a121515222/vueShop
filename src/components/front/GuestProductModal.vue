@@ -3,11 +3,20 @@ import BsModal from 'bootstrap/js/dist/modal'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
+import { useGetCartStore } from '../../stores/useGetCartStore';
 import { useInfoStore } from '../../stores/useInfoStore'
+
 
 const productStore = useGetProductsStore();
 const { getProduct } = productStore;
 const { dataProduct, isDataLoading } = storeToRefs(productStore);
+
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
+
+const cartStore = useGetCartStore();
+const { addCart } = cartStore;
+
 const addingProductId = ref('');
 defineExpose({
   modalOpen,
@@ -20,8 +29,43 @@ function modalOpen(id){
 function modalClose(){
   bsModal.value.hide();
 }
-
-const qty = ref(0);
+async function addCarts(id, title, unit){
+  addingProductId.value = id; 
+  const sendData = {
+  data: {
+    product_id: id,
+    qty: productNum.value
+  }
+  }
+ const resData = await addCart(sendData);
+ cartAddInfo(resData, title, unit);
+ addingProductId.value = '';
+ productNum.value = 0;
+ modalClose();
+}
+function cartAddInfo(res, title, unit){
+  console.log('add',res.data)
+  switch (res.data.message) {
+    case '已加入購物車':
+      addMessage(
+        {
+          title: '加入購物車結果',
+          style: 'success',
+          content: `${title}${productNum.value}${unit}${res.data.message}`
+        }
+      )
+      break;
+    default:
+      addMessage(
+        {
+          title: '加入購物車結果',
+          style: 'danger',
+          content: '加入失敗'
+        }
+      )
+  }
+}
+const productNum = ref(0);
 
 const guestProductModalRef = ref();
 const bsModal = ref(null);
@@ -119,23 +163,23 @@ onMounted(()=>{
           </div>
           <div class="modal-footer gap-1 gap-sm-3 bg-middle">
             <button class="btn btn-primary btnHover" type="button"
-            @click="qty -= 1" :disabled="qty<2"
-            :class="{buttonDisabledCursor : qty <2}"
+            @click="productNum -= 1" :disabled="productNum<2"
+            :class="{buttonDisabledCursor : productNum <2}"
             >
               <i class="bi bi-dash"></i>
             </button>
-            <span style="min-width:20px"> {{qty}}</span>
+            <span style="min-width:20px"> {{productNum}}</span>
             <button type="button" class="btn btn-primary btnHover"
-            @click="qty += 1"
-            :disabled="qty === 100"
-            :class="{buttonDisabledCursor : qty === 100}"
+            @click="productNum += 1"
+            :disabled="productNum === 100"
+            :class="{buttonDisabledCursor : productNum === 100}"
             >
               <i class="bi bi-plus"></i>
             </button>
             <button class="btn btn-secondary btnHover" type="button"
-            @click="addCart(dataProduct.id, dataProduct.title)"
-            :disabled="dataProduct.id === addingProductId  || qty < 1"
-            :class="{buttonDisabledCursor : dataProduct.id === addingProductId || qty < 1}">
+            @click="addCarts(dataProduct.id, dataProduct.title, dataProduct.unit)"
+            :disabled="dataProduct.id === addingProductId  || productNum < 1"
+            :class="{buttonDisabledCursor : dataProduct.id === addingProductId || productNum < 1}">
               <span  class="spinner-border spinner-border-sm"  role="status" aria-hidden="true"
               v-show="dataProduct.id === addingProductId"></span>
               加入購物車

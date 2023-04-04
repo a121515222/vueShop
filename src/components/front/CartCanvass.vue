@@ -2,11 +2,11 @@
 import BsOffcanvas from 'bootstrap/js/dist/offcanvas'
 import GuestCoupon from './GuestCoupon.vue'
 import { storeToRefs } from 'pinia'
-import { useGetCartsStore } from '../../stores/useGetCart'
+import { useGetCartStore } from '../../stores/useGetCartStore'
 import { useInfoStore } from '../../stores/useInfoStore'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-const cartStore = useGetCartsStore();
+const cartStore = useGetCartStore();
 const { getCarts, editCart, deleteCart, deleteAllCart, cartIsLoading, numIsChanging } = cartStore;
 const { cartData, cartLength, isCartLoading, isChangeNum} = storeToRefs(cartStore)
 const infoStore = useInfoStore();
