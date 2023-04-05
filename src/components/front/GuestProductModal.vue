@@ -72,56 +72,6 @@ const bsModal = ref(null);
 onMounted(()=>{
   bsModal.value = new BsModal(guestProductModalRef.value);
 })
-// export default {
-//   data () {
-//     return {
-//       bsModal: '',
-//       product: {},
-//       qty: 1,
-//       isLoading: ''
-//     }
-//   },
-//   emits: ['sendId', 'getCart'],
-//   methods: {
-//     ...mapActions(toastStore, ['addMessage']),
-//     guestModalOpen (id) {
-//       this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/product/${id}`).then((res) => {
-//         this.product = res.data.product
-//         this.bsModal.show()
-//       }).catch((err) => { console.dir(err.response.data.message) })
-//     },
-//     guestModalClose () {
-//       this.bsModal.hide()
-//     },
-//     addCart (id, title) {
-//       const sendCart = {
-//         data: {
-//           product_id: '',
-//           qty: 1
-//         }
-//       }
-//       sendCart.data.product_id = id
-//       sendCart.data.qty = this.qty
-//       this.$emit('sendId', id)
-//       this.isLoading = id
-//       this.$http.post(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/cart`, sendCart).then((res) => {
-//         this.$emit('sendId', '')
-//         this.isLoading = ''
-//         this.qty = 1
-//         this.addMessage(
-//           {
-//             title: `${title}加入購物車結果`,
-//             style: 'success',
-//             content: title + res.data.message
-//           }
-//         )
-//       }).catch((err) => { console.dir(err.response.data.message) })
-//     }
-//   },
-//   mounted () {
-//     this.bsModal = new BsModal(this.$refs.guestProductModal)
-//   }
-// }
 </script>
 <template>
   <div class="modal fade" tabindex="-1" aria-hidden="true" ref="guestProductModalRef">

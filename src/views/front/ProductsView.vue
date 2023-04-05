@@ -5,5 +5,5 @@ import ShowProduct from '../../components/front/showProduct.vue';
 <template>
   <ShowProduct />
   
-  </template>
+</template>
 <style></style>

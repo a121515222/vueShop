@@ -24,6 +24,7 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
       const resData = await getSingleData(id);
       dataProduct.value = resData.data.product;
       isDataLoading.value = false;
+      return resData
     } catch (error) {
       console.log(error)
     }

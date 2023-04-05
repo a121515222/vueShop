@@ -5,9 +5,9 @@ import { useInfoStore } from '../../stores/useInfoStore';
 import { onMounted, ref, watch } from 'vue-demi';
 import GuestProductModal from '../../components/front//GuestProductModal.vue';
 
-const productsData = useGetProductsStore();
-const { getProducts } = productsData
-const { dataProducts, isDataLoading } = storeToRefs(productsData);
+const productStore = useGetProductsStore();
+const { getProducts } = productStore
+const { dataProducts, isDataLoading } = storeToRefs(productStore);
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
 const showData = ref([]);
@@ -47,6 +47,9 @@ function guestAddCart(){}
 onMounted(()=>{
   getProducts();
 })
+function goToProduct(id){
+
+}
 </script>
 <template>
   <div class="row pt-3">
@@ -96,7 +99,7 @@ onMounted(()=>{
                   快速商品資訊
                 </button>
                 <RouterLink class="btn btn-outline-secondary text-primary w-100 mb-1" :to="`/product/${item.id}`"
-                  @click="inspectId(item.id);" :disabled=isDataLoading
+                  @click="goToProduct(item.id);" :disabled=isDataLoading
                   :class="{buttonDisabledCursor : item.id === isDataLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
                     v-show=isDataLoading>
