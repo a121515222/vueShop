@@ -4,6 +4,7 @@ import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import { useInfoStore } from '../../stores/useInfoStore';
 import { onMounted, ref, watch } from 'vue-demi';
 import GuestProductModal from '../../components/front//GuestProductModal.vue';
+import { useRouter } from 'vue-router';
 
 const productStore = useGetProductsStore();
 const { getProducts } = productStore
@@ -47,8 +48,9 @@ function guestAddCart(){}
 onMounted(()=>{
   getProducts();
 })
-function goToProduct(id){
-
+const routers = useRouter();
+function goToProduct(path){
+  routers.value.push(path);
 }
 </script>
 <template>
@@ -57,7 +59,7 @@ function goToProduct(id){
       <template v-for="(item) in showData" :key="item.id">
         <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
           <a class="text-black" href="#" style="text-decoration:none;"
-            @click.prevent="inspectId(item.id);$router.push(`/product/${item.id}`)">
+            @click.prevent="goToProduct(`/product/${item.id}`)">
             <div class="card  px-0 position-relative cardHover" v-if="item.is_enabled === 1 || 4">
               <img class="img-fluid card-img-top" style="max-height:200px;min-height:200px;" :src="item.imageUrl"
                 :alt="item.title">

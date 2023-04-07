@@ -1,24 +1,26 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import GuestProductModal from '../../components/front/GuestProductModal.vue';
 import ShowProduct from '../../components/front/showProduct.vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
 const productStore = useGetProductsStore();
-const { getProduct } = productStore;
-const { dataProduct:product } = storeToRefs(productStore);
+const { getProduct,getProducts } = productStore;
+const { dataProduct:product, dataProducts, isDataLoading } = storeToRefs(productStore);
 const route = useRoute();
 const images = ref([]);
-const filterProducts = ref([]);
+
+const keyWords = ref([]);
 async function getProductData(){
   const { id } = route.params;
   const res = await getProduct(id);
-  console.log('singleData', res)
-  console.log('image', res.data.product.imageUrl)
+  getProducts();
   images.value = [res.data.product.imageUrl,...res.data.product.imagesUrl];
-  
-  
+  keyWords.value = [res.data.product.title, res.data.product.category];
+  console.log('keyWords', keyWords.value)
+  console.log('products',dataProducts.value)
+  recommendProduct();
   // this.product = res.data.product
   // this.isLoadingPage = false
   // this.pathId = this.product.id
@@ -36,11 +38,37 @@ async function addCarts(id, title, unit){
     qty: productNum.value
   }
   }
- const resData = await addCart(sendData);
- cartAddInfo(resData, title, unit);
- addingProductId.value = '';
- productNum.value = 0;
- modalClose();
+  
+  const resData = await addCart(sendData);
+  cartAddInfo(resData, title, unit);
+  addingProductId.value = '';
+  productNum.value = 0;
+  modalClose();
+}
+watch(dataProducts,(newValue, oldValue)=>{
+  if(newValue !== oldValue) {
+    recommendProduct();
+    console.log('newValue',newValue);
+  }
+},{deep: true});
+const recommendProducts = ref([]);
+function recommendProduct() { 
+  // 推薦商品功能
+  //recommend
+
+  console.log('r',dataProducts.value)
+  recommendProducts.value = [];
+  keyWords.value.forEach((item) => {
+    dataProducts.value.products.forEach((i) => {
+      if (i.category.indexOf(item) !== -1 || i.content.indexOf(item) !== -1 || i.description.indexOf(item) !== -1 ||
+      i.title.indexOf(item) !== -1) {
+        recommendProducts.value.push(i);
+        // 去除重複的資料
+        recommendProducts.value = [...new Set(recommendProducts.value)];
+        console.log('recommendProducts',recommendProducts.value);
+      }
+    });
+  });
 }
 function cartAddInfo(res, title, unit){
   console.log('add',res.data)
@@ -71,7 +99,7 @@ onMounted(()=>{
 </script>
 <template>
   <div class="container pt-10">
-    <VueLoading :active="isLoadingPage" :z-index="1060"/>
+    <VueLoading :active="isDataLoading" :z-index="1060"/>
     <div class="row card flex-md-row mx-0">
       <div class="col-12 col-lg-6 ps-0">
         <template v-if="images.length > 2">
@@ -122,10 +150,10 @@ onMounted(()=>{
             </button>
             <button type="button" class="btn btn-primary text-secondary text-nowrap"
             @click="addCarts(product.id, product.title)"
-            :disabled="isLoading || productNum < 1"
-            :class="{buttonDisabledCursor : isLoading || productNum < 1}">
+            :disabled="isDataLoading || productNum < 1"
+            :class="{buttonDisabledCursor : isDataLoading || productNum < 1}">
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-              v-show="isLoading"></span>
+              v-show="isDataLoading"></span>
               加入購物車
             </button>
           </div>
@@ -144,20 +172,16 @@ onMounted(()=>{
          </div>
         </div>
       </div>
-      <div class="col-12 my-3" v-if="filterProducts.length > 0">
+      <div class="col-12 my-3" v-if="recommendProducts.length > 0">
         <h3 class="fw-bold fa-2">推薦產品</h3>
         <ShowProduct
-        :guest-show-product="filterProducts"
-        :is-guest-page-loading="isLoadingPage"
-        @send-id="guestProductDetail"
-        @inspect-id="inspectRouteId"
-        @add-cart="guestAddCart"
+        :guest-show-product="recommendProducts"
         />
       </div>
     </div>
   </div>
   <!-- Modal -->
-  <GuestProductModal ref="guestModal" @send-id="getId"/>
+  <GuestProductModal ref="guestModal" />
 </template>
 <style lang="scss">
   .pictureSize {
