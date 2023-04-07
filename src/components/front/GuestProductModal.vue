@@ -29,6 +29,7 @@ function modalOpen(id){
 function modalClose(){
   bsModal.value.hide();
 }
+const productNum = ref(0);
 async function addCarts(id, title, unit){
   addingProductId.value = id; 
   const sendData = {
@@ -65,8 +66,6 @@ function cartAddInfo(res, title, unit){
       )
   }
 }
-const productNum = ref(0);
-
 const guestProductModalRef = ref();
 const bsModal = ref(null);
 onMounted(()=>{

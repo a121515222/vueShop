@@ -27,6 +27,43 @@ async function getProductData(){
   // 修改標題,如果沒有標題就用route中index.js內建標題
   document.title = product.title || route.meta.title
 }
+const productNum = ref(0);
+async function addCarts(id, title, unit){
+  addingProductId.value = id; 
+  const sendData = {
+  data: {
+    product_id: id,
+    qty: productNum.value
+  }
+  }
+ const resData = await addCart(sendData);
+ cartAddInfo(resData, title, unit);
+ addingProductId.value = '';
+ productNum.value = 0;
+ modalClose();
+}
+function cartAddInfo(res, title, unit){
+  console.log('add',res.data)
+  switch (res.data.message) {
+    case '已加入購物車':
+      addMessage(
+        {
+          title: '加入購物車結果',
+          style: 'success',
+          content: `${title}${productNum.value}${unit}${res.data.message}`
+        }
+      )
+      break;
+    default:
+      addMessage(
+        {
+          title: '加入購物車結果',
+          style: 'danger',
+          content: '加入失敗'
+        }
+      )
+  }
+}
 onMounted(()=>{
   getProductData();
 })
@@ -73,20 +110,20 @@ onMounted(()=>{
           </template>
           <div class="d-flex justify-content-end gap-3 ">
             <button type="button" class="btn btn-primary text-secondary text-nowrap"
-            @click="qty -= 1" :disabled="qty < 2"
-            :class="{buttonDisabledCursor : qty < 2}">
+            @click="productNum -= 1" :disabled="productNum < 2"
+            :class="{buttonDisabledCursor : productNum < 2}">
               <i class="bi bi-dash"></i>
             </button>
-            <span class="align-self-center px-1" style="min-width:20px"> {{qty}}</span>
+            <span class="align-self-center px-1" style="min-width:20px"> {{productNum}}</span>
             <button type="button" class="btn btn-primary text-secondary text-nowrap"
-            @click="qty += 1" :disabled="qty === 100"
-            :class="{buttonDisabledCursor : qty === 100}">
+            @click="productNum += 1" :disabled="productNum === 100"
+            :class="{buttonDisabledCursor : productNum === 100}">
               <i class="bi bi-plus"></i>
             </button>
             <button type="button" class="btn btn-primary text-secondary text-nowrap"
-            @click="addCart(product.id, product.title)"
-            :disabled="isLoading || qty < 1"
-            :class="{buttonDisabledCursor : isLoading || qty < 1}">
+            @click="addCarts(product.id, product.title)"
+            :disabled="isLoading || productNum < 1"
+            :class="{buttonDisabledCursor : isLoading || productNum < 1}">
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
               v-show="isLoading"></span>
               加入購物車
@@ -122,4 +159,15 @@ onMounted(()=>{
   <!-- Modal -->
   <GuestProductModal ref="guestModal" @send-id="getId"/>
 </template>
-<style></style>
+<style lang="scss">
+  .pictureSize {
+    height: 280px;
+    min-width: 300px;
+  }
+  @media (min-width:992px) {
+    .pictureSize {
+    height: 30vh;
+    min-width: 33%;
+   }
+  }
+</style>
