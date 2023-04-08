@@ -12,10 +12,8 @@ const { dataProducts, isDataLoading } = storeToRefs(productStore);
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
 const showData = ref([]);
+const props = defineProps(['guestShowProduct']);
 
-watch(dataProducts, (newValue) => {
-  showData.value = newValue.products
-})
 const favorites = ref(JSON.parse(localStorage.getItem('myFavoritesItem')) || []);
 function addFavorites(id, title) {
   favorites.value.push(id)
@@ -45,8 +43,16 @@ function guestProductDetail(id){
   productModalRef.value.modalOpen(id)
 }
 function guestAddCart(){}
+
+function propsReplaceDataProduct(){
+  if(props.guestShowProduct.length < dataProducts.value.products.length) {
+    showData.value = props.guestShowProduct;
+  }
+}
+
 onMounted(()=>{
   getProducts();
+  propsReplaceDataProduct();
 })
 const routers = useRouter();
 function goToProduct(path){

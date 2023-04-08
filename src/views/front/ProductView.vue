@@ -5,12 +5,24 @@ import { useRoute } from 'vue-router';
 import GuestProductModal from '../../components/front/GuestProductModal.vue';
 import ShowProduct from '../../components/front/showProduct.vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
+import { useGetCartStore } from '../../stores/useGetCartStore';
+import { useInfoStore } from '../../stores/useInfoStore';
+
 const productStore = useGetProductsStore();
 const { getProduct,getProducts } = productStore;
 const { dataProduct:product, dataProducts, isDataLoading } = storeToRefs(productStore);
-const route = useRoute();
-const images = ref([]);
 
+const cartStore = useGetCartStore();
+const { addCart } = cartStore;
+
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
+
+const route = useRoute();
+
+
+
+const images = ref([]);
 const keyWords = ref([]);
 async function getProductData(){
   const { id } = route.params;
@@ -18,20 +30,12 @@ async function getProductData(){
   getProducts();
   images.value = [res.data.product.imageUrl,...res.data.product.imagesUrl];
   keyWords.value = [res.data.product.title, res.data.product.category];
-  console.log('keyWords', keyWords.value)
-  console.log('products',dataProducts.value)
   recommendProduct();
-  // this.product = res.data.product
-  // this.isLoadingPage = false
-  // this.pathId = this.product.id
-  // this.images = [this.product.imageUrl, ...this.product.imagesUrl]
-  // this.keyWord = [this.product.title, this.product.category]
-  // 修改標題,如果沒有標題就用route中index.js內建標題
+  
   document.title = product.title || route.meta.title
 }
 const productNum = ref(0);
 async function addCarts(id, title, unit){
-  addingProductId.value = id; 
   const sendData = {
   data: {
     product_id: id,
@@ -41,37 +45,29 @@ async function addCarts(id, title, unit){
   
   const resData = await addCart(sendData);
   cartAddInfo(resData, title, unit);
-  addingProductId.value = '';
   productNum.value = 0;
-  modalClose();
 }
 watch(dataProducts,(newValue, oldValue)=>{
   if(newValue !== oldValue) {
     recommendProduct();
-    console.log('newValue',newValue);
   }
 },{deep: true});
 const recommendProducts = ref([]);
 function recommendProduct() { 
   // 推薦商品功能
   //recommend
-
-  console.log('r',dataProducts.value)
+  if(dataProducts.value.products){
   recommendProducts.value = [];
-  keyWords.value.forEach((item) => {
-    dataProducts.value.products.forEach((i) => {
-      if (i.category.indexOf(item) !== -1 || i.content.indexOf(item) !== -1 || i.description.indexOf(item) !== -1 ||
-      i.title.indexOf(item) !== -1) {
-        recommendProducts.value.push(i);
-        // 去除重複的資料
-        recommendProducts.value = [...new Set(recommendProducts.value)];
-        console.log('recommendProducts',recommendProducts.value);
-      }
-    });
-  });
+  dataProducts.value.products.forEach((product) =>{
+    if(keyWords.value.includes(product.category) || keyWords.value.includes(product.content) || keyWords.value.includes(product.description)){
+      recommendProducts.value.push(product);
+    }
+  })
+    recommendProducts.value = [...new Set(recommendProducts.value)];
+  }
+  
 }
 function cartAddInfo(res, title, unit){
-  console.log('add',res.data)
   switch (res.data.message) {
     case '已加入購物車':
       addMessage(
@@ -149,7 +145,7 @@ onMounted(()=>{
               <i class="bi bi-plus"></i>
             </button>
             <button type="button" class="btn btn-primary text-secondary text-nowrap"
-            @click="addCarts(product.id, product.title)"
+            @click="addCarts(product.id, product.title, product.unit)"
             :disabled="isDataLoading || productNum < 1"
             :class="{buttonDisabledCursor : isDataLoading || productNum < 1}">
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
