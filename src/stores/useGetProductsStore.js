@@ -12,7 +12,7 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
     try {
       isProductLoading.value = true;
       const resData = await getData();
-      dataProducts.value = resData;
+      dataProducts.value = resData.products;
       isProductLoading.value = false;
     } catch (error) {
       console.log(error)
@@ -29,7 +29,16 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
       console.log(error)
     }
   }
-
+function showMyFavorites() {
+    const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
+    console.log('showFavorites',dataProducts.value)
+    dataProducts.value = dataProducts.value.filter((product)=>{
+      if(myFavorites.includes(product.id)){
+        console.log('f product',product)
+        return product
+      }
+    });
+}
   // showMyFavorites () {
   //   const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
   //   this.guestShowProduct = []
@@ -100,6 +109,7 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
     dataProduct,
     isProductLoading,
     getProducts,
-    getProduct
+    getProduct,
+    showMyFavorites
   }
 })

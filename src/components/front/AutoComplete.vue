@@ -16,7 +16,9 @@
 
 <script>
 import { mapState } from 'pinia'
-import productStore from '@/stores/products'
+import { ref } from 'vue';
+// import productStore from '@/stores/products' 
+const productStore = ref([]);
 
 export default {
   props: ['inputData', 'isFocus'],

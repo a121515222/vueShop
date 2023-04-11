@@ -22,7 +22,7 @@ const props = defineProps(['guestShowProduct']);
 
 watch(dataProducts,(newValue, oldValue) =>{
   if(newValue !== oldValue && replaceData.value < getProductData.value) {
-    showData.value = newValue.products;
+    showData.value = newValue;
   }
 })
 
