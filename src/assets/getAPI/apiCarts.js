@@ -12,7 +12,6 @@ const apiCarts = {
     }
   },
   async addData(sendData){
-    console.log('addData sendDATA',sendData);
     try {
       const data = await axios.post(`${api}/api/${path}/cart`, sendData);
       return data

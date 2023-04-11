@@ -9,7 +9,7 @@ import { useInfoStore } from '../../stores/useInfoStore'
 
 const productStore = useGetProductsStore();
 const { getProduct } = productStore;
-const { dataProduct, isDataLoading } = storeToRefs(productStore);
+const { dataProduct, isProductLoading } = storeToRefs(productStore);
 
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
@@ -74,7 +74,7 @@ onMounted(()=>{
 </script>
 <template>
   <div class="modal fade" tabindex="-1" aria-hidden="true" ref="guestProductModalRef">
-    <VueLoading :active="isDataLoading"/>
+    <VueLoading :active="isProductLoading"/>
       <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header bg-middle">

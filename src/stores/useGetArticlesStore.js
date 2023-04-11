@@ -6,10 +6,13 @@ const { getData } = apiArticles;
 
 export const useGetArticlesStore = defineStore('storeArticles', ()=>{
   const dataArticles = ref([]);
+  const isArticleLoading = ref(false)
   async function getArticles(){
     try {
+      isArticleLoading.value = true;
       const resData = await getData();
       dataArticles.value = resData;
+      isArticleLoading.value = false;
     } catch (error) {
       console.log(error)
     }
@@ -17,6 +20,7 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
 
   return{
     dataArticles,
+    isArticleLoading,
     getArticles,
   }
 })

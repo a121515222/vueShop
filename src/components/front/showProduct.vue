@@ -2,17 +2,29 @@
 import { storeToRefs } from 'pinia';
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import { useInfoStore } from '../../stores/useInfoStore';
+import { useGetCartStore } from '../../stores/useGetCartStore';
 import { onMounted, ref, watch } from 'vue-demi';
 import GuestProductModal from '../../components/front//GuestProductModal.vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const productStore = useGetProductsStore();
 const { getProducts } = productStore
-const { dataProducts, isDataLoading } = storeToRefs(productStore);
+const { dataProducts, isProductLoading } = storeToRefs(productStore);
+
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
+
+const cartStore = useGetCartStore();
+const { addCart } = cartStore;
+
 const showData = ref([]);
 const props = defineProps(['guestShowProduct']);
+
+watch(dataProducts,(newValue, oldValue) =>{
+  if(newValue !== oldValue && replaceData.value < getProductData.value) {
+    showData.value = newValue.products;
+  }
+})
 
 const favorites = ref(JSON.parse(localStorage.getItem('myFavoritesItem')) || []);
 function addFavorites(id, title) {
@@ -42,22 +54,67 @@ const productModalRef = ref(null);
 function guestProductDetail(id){
   productModalRef.value.modalOpen(id)
 }
-function guestAddCart(){}
+async function showProductsAddCart(id, title, unit){
 
+  const sendData = {
+  data: {
+    product_id: id,
+    qty: 1
+  }
+  }
+  
+  const resData = await addCart(sendData);
+  cartAddInfo(resData, title, unit);
+  
+}
+
+function cartAddInfo(res, title, unit){
+  switch (res.data.message) {
+    case '已加入購物車':
+      addMessage(
+        {
+          title: '加入購物車結果',
+          style: 'success',
+          content: `${title}1${unit}${res.data.message}`
+        }
+      )
+      break;
+    default:
+      addMessage(
+        {
+          title: '加入購物車結果',
+          style: 'danger',
+          content: '加入失敗'
+        }
+      )
+  }
+}
+
+const replaceData = ref(0);
 function propsReplaceDataProduct(){
-  if(props.guestShowProduct.length < dataProducts.value.products.length) {
+  if(props.guestShowProduct !== undefined) {
+    replaceData.value = new Date();
     showData.value = props.guestShowProduct;
   }
 }
 
-onMounted(()=>{
+const getProductData = ref(0);
+function initShowProduct(){
+  getProductData.value = new Date();
   getProducts();
-  propsReplaceDataProduct();
-})
+}
+
 const routers = useRouter();
 function goToProduct(path){
-  routers.value.push(path);
+  routers.push(path);
 }
+
+const route = useRoute();
+onMounted(()=>{
+  initShowProduct();
+  propsReplaceDataProduct();
+})
+
 </script>
 <template>
   <div class="row pt-3">
@@ -99,25 +156,26 @@ function goToProduct(path){
                 </div>
                 <button class="btn btn-outline-secondary text-primary w-100 mb-1" type="button"
                   @click.stop.prevent="guestProductDetail(item.id)" 
-                  :disabled=isDataLoading
-                  :class="{buttonDisabledCursor : item.id === isDataLoading}">
+                  :disabled=isProductLoading
+                  :class="{buttonDisabledCursor : item.id === isProductLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    v-show=isDataLoading>
+                    v-show=isProductLoading>
                   </span>
                   快速商品資訊
                 </button>
-                <RouterLink class="btn btn-outline-secondary text-primary w-100 mb-1" :to="`/product/${item.id}`"
-                  @click="goToProduct(item.id);" :disabled=isDataLoading
-                  :class="{buttonDisabledCursor : item.id === isDataLoading}">
+                <RouterLink class="btn btn-outline-secondary text-primary w-100 mb-1" 
+                  :to="`/product/${item.id}`"
+                  :disabled=isProductLoading
+                  :class="{buttonDisabledCursor : item.id === isProductLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    v-show=isDataLoading>
+                    v-show=isProductLoading>
                   </span>商品詳細資訊
                 </RouterLink>
                 <button class="btn btn-primary w-100 text-secondary" type="button"
-                  @click.stop.prevent="guestAddCart(item.id,item.title)" :disabled=isDataLoading
-                  :class="{buttonDisabledCursor : item.id === isDataLoading}">
+                  @click.stop.prevent="showProductsAddCart(item.id, item.title, item.unit)" :disabled=isProductLoading
+                  :class="{buttonDisabledCursor : item.id === isProductLoading}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-                    v-show=isDataLoading>
+                    v-show=isProductLoading>
                   </span>
                   加到購物車
                 </button>

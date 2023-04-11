@@ -38,53 +38,6 @@ onMounted(()=>{
 onUnmounted(()=>{
   window.addEventListener('scroll', scrollHandler);
 })
-// export default {
-//   data () {
-//     return {
-//       scrollY: 0,
-//       guestProduct: [],
-//       articles: [],
-//       animationAction: 0,
-//       imgLen: 0,
-//       animationDuration: 3000
-//     }
-//   },
-//   methods: {
-//     runAnimation () {
-//       setInterval(() => {
-//         this.animationAction += 1
-//       }, this.animationDuration)
-//     },
-//     scrollWatch () {
-//       // 取得scrollY數值
-//       this.scrollY = window.scrollY
-//     },
-//     getProduct () {
-//       this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/products/all`).then((res) => {
-//         this.guestProduct = res.data.products
-//         this.guestShowProduct = this.guestProduct
-//       })
-//         .catch((err) => {
-//           console.dir(err.response.data.message)
-//         })
-//     },
-//     getArticle () {
-//       this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/articles`)
-//         .then((res) => {
-//           this.articles = res.data.articles
-//         })
-//         .catch((err) => { console.dir(err.response.data.message) })
-//     }
-//   },
-//   mounted () {
-//     // 監聽scroll
-//     window.addEventListener('scroll', this.scrollWatch)
-//     this.getArticle()
-//     this.getProduct()
-//     this.imgLen = this.$refs.BannerImages.children.length
-//     this.runAnimation()
-//   }
-// }
 </script>
 
 <template>

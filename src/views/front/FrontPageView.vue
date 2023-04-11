@@ -1,18 +1,32 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useGetCartStore } from '../../stores/useGetCartStore';
+import { useGetArticlesStore } from '../../stores/useGetArticlesStore';
+import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import { useUtilStore } from '../../stores/useUtilStore';
 import NavBar from '../../components/front/NavBar.vue'
 import CartCanvass from '../../components/front/CartCanvass.vue';
 
 const cartStore = useGetCartStore();
 const { getCarts } = cartStore;
-const { cartData, cartLength} = storeToRefs(cartStore);
+const { cartData, cartLength, isCartLoading} = storeToRefs(cartStore);
+
+const articleStore = useGetArticlesStore();
+const { isArticleLoading } = storeToRefs(articleStore);
+
+const productStore = useGetProductsStore();
+const { isProductLoading } = storeToRefs(productStore);
 
 const utilStore = useUtilStore();
 const { scrollHandler } = utilStore;
 const { scrollY } = storeToRefs(utilStore);
+
+
+const isLoading =  computed(()=>{
+  return isCartLoading.value || isArticleLoading.value || isProductLoading.value;
+})
+
 
 function guestOpenCart() {
   cartRef.value.cartOpen();
@@ -26,6 +40,7 @@ onMounted(()=>{
 
 </script>
 <template>
+  <VueLoading :active="isLoading"/>
   <div class="d-flex flex-column" style="min-height:100vh">
     <template v-if="!($route.path === '/' && scrollY < 300)">
       <div class="cart bg-secondary d-flex justify-content-center align-items-center">

@@ -10,7 +10,7 @@ import { useInfoStore } from '../../stores/useInfoStore';
 
 const productStore = useGetProductsStore();
 const { getProduct,getProducts } = productStore;
-const { dataProduct:product, dataProducts, isDataLoading } = storeToRefs(productStore);
+const { dataProduct:product, dataProducts, isProductLoading } = storeToRefs(productStore);
 
 const cartStore = useGetCartStore();
 const { addCart } = cartStore;
@@ -19,8 +19,6 @@ const infoStore = useInfoStore();
 const { addMessage } = infoStore;
 
 const route = useRoute();
-
-
 
 const images = ref([]);
 const keyWords = ref([]);
@@ -94,8 +92,10 @@ onMounted(()=>{
 
 </script>
 <template>
-  <div class="container pt-10">
-    <VueLoading :active="isDataLoading" :z-index="1060"/>
+  <div class="container pt-3"
+  
+  >
+    <VueLoading :active="isProductLoading" :z-index="1060"/>
     <div class="row card flex-md-row mx-0">
       <div class="col-12 col-lg-6 ps-0">
         <template v-if="images.length > 2">
@@ -146,10 +146,10 @@ onMounted(()=>{
             </button>
             <button type="button" class="btn btn-primary text-secondary text-nowrap"
             @click="addCarts(product.id, product.title, product.unit)"
-            :disabled="isDataLoading || productNum < 1"
-            :class="{buttonDisabledCursor : isDataLoading || productNum < 1}">
+            :disabled="isProductLoading || productNum < 1"
+            :class="{buttonDisabledCursor : isProductLoading || productNum < 1}">
               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
-              v-show="isDataLoading"></span>
+              v-show="isProductLoading"></span>
               加入購物車
             </button>
           </div>
