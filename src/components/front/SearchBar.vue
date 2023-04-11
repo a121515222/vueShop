@@ -5,16 +5,23 @@ import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import AutoComplete from './AutoComplete.vue'
 
 const productStore = useGetProductsStore();
-const { showMyFavorites, getProducts, searchResults } = productStore;
+const { showMyFavorites, getProducts, searchResults, sortResultsHightToLow, sortResultsLowToHight } = productStore;
+
 const favorites = JSON.parse(localStorage.getItem('myFavoritesItem')) || [];
 
 function cleanSearch() {
+  minPrice.value = null;
+  maxPrice.value = null;
+  searchKeyWords.value = '';
   getProducts();
 }
 const searchKeyWords = ref('');
+const minPrice = ref(null);
+const maxPrice = ref(null);
 function search() {
   const keywords = searchKeyWords.value.trim().split(' ');
-  searchResults(keywords);
+  console.log('searchbar min',minPrice.value, 'searchbar max', maxPrice.value);
+  searchResults(keywords, minPrice.value, maxPrice.value);
 }
 // export default {
 //   emits: ['sendSearchInfo', 'searchInfo', 'minPrice', 'maxPrice', 'hight-to-low', 'low-to-hight', 'showMyFavorites'],
@@ -90,9 +97,9 @@ function search() {
   </div>
   <div class="d-flex flex-column flex-sm-row justify-content-sm-end gap-2 pt-3 ">
     <button v-if="favorites.length !== 0" type="button" class="btn btn-primary text-secondary text-nowrap" @click="showMyFavorites()">顯示我的最愛</button>
-    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="$emit('hight-to-low')" >價格由大至小排列</button>
-    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="$emit('low-to-hight')" >價格由小至大排列</button>
-    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="getProducts()">清除搜尋</button>
+    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="sortResultsHightToLow()" >價格由大至小排列</button>
+    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="sortResultsLowToHight()" >價格由小至大排列</button>
+    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="cleanSearch()">清除搜尋</button>
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="search()">搜尋</button>
   </div>
 </template>

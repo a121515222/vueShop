@@ -13,7 +13,6 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
       isProductLoading.value = true;
       const resData = await getData();
       dataProducts.value = resData.products;
-      console.log('products',dataProducts.value )
       isProductLoading.value = false;
     } catch (error) {
       console.log(error)
@@ -40,7 +39,7 @@ function showMyFavorites() {
   });
 }
 
-function searchResults(keyWords) {
+function searchKeyWordsResults(keyWords) {
   dataProducts.value = dataProducts.value.filter((product) => {
     for (const keyWord of keyWords) {
       if (product.title.includes(keyWord) ||
@@ -55,91 +54,59 @@ function searchResults(keyWords) {
   });
 }
 
-// function searchResults(keyWords) {
-//   dataProducts.value = dataProducts.value.filter((product)=>{
-//     return keyWords.some((keyWord)=>{
-//       if(product.title.includes(keyWord) || product.category.includes(keyWord) || product.content.includes(keyWord)
-//       || product.unit.includes(keyWord) || product.description.includes(keyWord)){
-//         return product
-//       }
-//     });
-//   })
-// }
-
-
-
-  // showMyFavorites () {
-  //   const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
-  //   this.guestShowProduct = []
-  //   this.guestProduct.forEach((i) => {
-  //     if (myFavorites.indexOf(i.id) !== -1) {
-  //       this.guestShowProduct.push(i)
-  //     }
-  //   })
-  // },
-  // sortHightToLow () {
-  //   this.guestShowProduct.sort((a, b) => {
-  //     if (a.price < a.origin_price) {
-  //       return b.price - a.price
-  //     } else if (a.price === a.origin_price) {
-  //       return b.price - a.origin_price
-  //     }
-  //   })
-  // },
-  // sortLowToHight () {
-  //   this.guestShowProduct.sort((a, b) => {
-  //     if (a.price < a.origin_price) {
-  //       return a.price - b.price
-  //     } else if (a.price === a.origin_price) {
-  //       return a.price - b.origin_price
-  //     }
-  //   })
-  // },
-  // infoFilter (info) {
-  //   const infoArr = info.split(' ')
-  //   this.guestProduct.forEach((item) => {
-  //     infoArr.forEach((i) => {
-  //       if (item.category.indexOf(i) !== -1 || item.content.indexOf(i) !== -1 || item.description.indexOf(i) !== -1 ||
-  //       item.title.indexOf(i) !== -1) {
-  //         this.guestShowProduct.push(item)
-  //       }
-  //     })
-  //   })
-  // },
-  // minFilter (min, max, info) {
-  //   if (min) {
-  //     if (this.guestShowProduct.length === 0 && !info && !max) {
-  //       this.guestShowProduct = this.guestProduct
-  //     }
-  //     this.guestShowProduct = this.guestShowProduct.filter(item => min <= item.price || min <= item.origin_price)
-  //   }
-  // },
-  // maxFilter (max, min, info) {
-  //   if (max) {
-  //     if (this.guestShowProduct.length === 0 && !info && !min) {
-  //       this.guestShowProduct = this.guestProduct
-  //     }
-  //     this.guestShowProduct = this.guestShowProduct.filter(item => max >= item.price || max >= item.origin_price)
-  //   }
-  // },
-  // guestShowSearch (info, min, max) {
-  //   if (info || min || max) {
-  //     this.guestShowProduct = []
-  //     this.infoFilter(info)
-  //     this.minFilter(min, max, info)
-  //     this.maxFilter(max, min, info)
-  //   } else {
-  //     this.guestShowProduct = this.guestProduct
-  //   }
-  // }
-    
-  return{
-    dataProducts,
-    dataProduct,
-    isProductLoading,
-    getProducts,
-    getProduct,
-    showMyFavorites,
-    searchResults
+function searchByMinPrice(minPrice) {
+  dataProducts.value = dataProducts.value.filter((product) =>{
+    if(product.price >= minPrice) {
+      return true;
+    }
+  });
+}
+function searchByMaxPrice(maxPrice) {
+  dataProducts.value = dataProducts.value.filter((product) =>{
+    if(product.price <= maxPrice) {
+      return true;
+    }
+  });
+}
+function searchResults(keyWords, minPrice, maxPrice) {
+  if(keyWords){
+    searchKeyWordsResults(keyWords);
   }
+  if(minPrice){
+    searchByMinPrice(minPrice);
+  }
+  if(maxPrice){
+    searchByMaxPrice(maxPrice);
+  }
+}
+function sortResultsHightToLow() {
+  dataProducts.value.sort((a, b) => {
+    if (a.price < a.origin_price) {
+      return b.price - a.price
+    } else if (a.price === a.origin_price) {
+      return b.price - a.origin_price
+    }
+  });
+}
+function sortResultsLowToHight() {
+  dataProducts.value.sort((a, b) => {
+    if (a.price < a.origin_price) {
+      return a.price - b.price
+    } else if (a.price === a.origin_price) {
+      return a.price - b.origin_price
+    }
+  });
+}
+  
+return{
+  dataProducts,
+  dataProduct,
+  isProductLoading,
+  getProducts,
+  getProduct,
+  showMyFavorites,
+  searchResults,
+  sortResultsHightToLow,
+  sortResultsLowToHight,
+}
 })
