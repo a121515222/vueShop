@@ -1,14 +1,20 @@
 
 <script setup>
+import { ref } from 'vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import AutoComplete from './AutoComplete.vue'
 
 const productStore = useGetProductsStore();
-const { showMyFavorites, getProducts } = productStore;
+const { showMyFavorites, getProducts, searchResults } = productStore;
 const favorites = JSON.parse(localStorage.getItem('myFavoritesItem')) || [];
 
 function cleanSearch() {
   getProducts();
+}
+const searchKeyWords = ref('');
+function search() {
+  const keywords = searchKeyWords.value.trim().split(' ');
+  searchResults(keywords);
 }
 // export default {
 //   emits: ['sendSearchInfo', 'searchInfo', 'minPrice', 'maxPrice', 'hight-to-low', 'low-to-hight', 'showMyFavorites'],
@@ -72,7 +78,7 @@ function cleanSearch() {
     <input  class="form-control w-sm-50 position-relative searchBarPlaceholderStyle" ref="searchInput" type="text"
     @focus="inputFocused = true; enterCounter = 0 ;"
     @blur="inputFocused=false"
-    v-model.lazy="searchInfo" placeholder="請輸入關鍵字">
+    v-model.lazy="searchKeyWords" placeholder="請輸入關鍵字">
     <AutoComplete
     :inputData="searchInfo"
     :is-focus="inputFocused"
@@ -87,7 +93,7 @@ function cleanSearch() {
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="$emit('hight-to-low')" >價格由大至小排列</button>
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="$emit('low-to-hight')" >價格由小至大排列</button>
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="getProducts()">清除搜尋</button>
-    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="sendSearchInfo()">搜尋</button>
+    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="search()">搜尋</button>
   </div>
 </template>
 

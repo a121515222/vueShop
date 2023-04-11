@@ -13,6 +13,7 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
       isProductLoading.value = true;
       const resData = await getData();
       dataProducts.value = resData.products;
+      console.log('products',dataProducts.value )
       isProductLoading.value = false;
     } catch (error) {
       console.log(error)
@@ -30,15 +31,43 @@ export const useGetProductsStore = defineStore('storeProducts', ()=>{
     }
   }
 function showMyFavorites() {
-    const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
-    console.log('showFavorites',dataProducts.value)
-    dataProducts.value = dataProducts.value.filter((product)=>{
-      if(myFavorites.includes(product.id)){
-        console.log('f product',product)
-        return product
-      }
-    });
+  const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
+  dataProducts.value = dataProducts.value.filter((product)=>{
+    if(myFavorites.includes(product.id)){
+      console.log('f product',product)
+      return product
+    }
+  });
 }
+
+function searchResults(keyWords) {
+  dataProducts.value = dataProducts.value.filter((product) => {
+    for (const keyWord of keyWords) {
+      if (product.title.includes(keyWord) ||
+          product.category.includes(keyWord) ||
+          product.content.includes(keyWord) ||
+          product.unit.includes(keyWord) ||
+          product.description.includes(keyWord)) {
+        return true;
+      }
+    }
+    return false;
+  });
+}
+
+// function searchResults(keyWords) {
+//   dataProducts.value = dataProducts.value.filter((product)=>{
+//     return keyWords.some((keyWord)=>{
+//       if(product.title.includes(keyWord) || product.category.includes(keyWord) || product.content.includes(keyWord)
+//       || product.unit.includes(keyWord) || product.description.includes(keyWord)){
+//         return product
+//       }
+//     });
+//   })
+// }
+
+
+
   // showMyFavorites () {
   //   const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
   //   this.guestShowProduct = []
@@ -110,6 +139,7 @@ function showMyFavorites() {
     isProductLoading,
     getProducts,
     getProduct,
-    showMyFavorites
+    showMyFavorites,
+    searchResults
   }
 })
