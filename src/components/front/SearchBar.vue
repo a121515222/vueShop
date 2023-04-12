@@ -28,6 +28,13 @@ function search() {
 function writeSearchKeyWord(keyword) {
   searchKeyWords.value = keyword;
 }
+const searchInput = ref(null);
+function cleanFocus() {
+  if(searchInput.value && document.activeElement) {
+    searchInput.value.selectionStart = searchKeyWords.value.length;
+    searchInput.value.selectionEnd = searchKeyWords.value.length;
+  }
+}
 // export default {
 //   emits: ['sendSearchInfo', 'searchInfo', 'minPrice', 'maxPrice', 'hight-to-low', 'low-to-hight', 'showMyFavorites'],
 //   components: {
@@ -95,7 +102,7 @@ function writeSearchKeyWord(keyword) {
     :search-key-words="searchKeyWords"
     :is-focus="isInputFocused"
     @autoCompleteResult="writeSearchKeyWord"
-    @sendInfoBlank="cleanSearch"
+    @removeFocus="cleanFocus"
     />
     <input class="form-control w-sm-25 searchBarPlaceholderStyle" type="number"  placeholder="請輸入最低價格" v-model.number="minPrice">
     <input class="form-control w-sm-25 searchBarPlaceholderStyle" type="number"  placeholder="請輸入最高價格" v-model.number="maxPrice">

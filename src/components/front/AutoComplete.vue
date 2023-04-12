@@ -7,13 +7,13 @@ const productsStore = useGetProductsStore();
 const { dataProducts } = storeToRefs(productsStore);
 
 const props = defineProps(['searchKeyWords', 'isFocus']);
-const emits = defineEmits(['autoCompleteResult'])
+const emits = defineEmits(['autoCompleteResult', 'removeFocus'])
 
 const isMouseIn = ref(false);
 
 const infoList = ref([]);
 function autoComplete(keyWords) {
-  if(keyWords.length > 0) {
+  if(keyWords?.length > 0) {
     keyWords.forEach((keyWord)=>{
       dataProducts.value.forEach((product)=>{
         if(product.title.includes(keyWord)
@@ -38,8 +38,8 @@ function sendAutoCompleteResults(keyWord) {
   infoList.value = [];
 }
 watch(()=>props.searchKeyWords, (newValue, oldValue) =>{
-  if(newValue !== '' && newValue !== oldValue) {
-    const keysWords = newValue.trim().split(' ');
+  if(newValue !== '' && !props.searchKeyWords?.match(/^[ ]*$/)  && newValue !== oldValue) {
+    const keysWords = newValue?.trim().split(' ');
     autoComplete(keysWords);
   } else if(newValue === '') {
     infoList.value = [];
@@ -48,16 +48,44 @@ watch(()=>props.searchKeyWords, (newValue, oldValue) =>{
 
 const keyWordListRef = ref();
 function mouseoverHover(index){
-  // console.log(keyWordListRef.value[index])
   keyWordListRef.value[index].classList.add('autoBackground');
+  listIndex.value = index;
   isMouseIn.value = true;
 }
 function mouseleaveCancelHover(index){
   keyWordListRef.value[index].classList.remove('autoBackground');
+  listIndex.value = index;
   isMouseIn.value = false;
 }
+const listIndex = ref(0);
+function keyboardChoose(e) {
+  switch(e.code) {
+    case 'ArrowDown' :
+      if (listIndex.value === infoList.value.length - 1) {
+        listIndex.value = infoList.value.length - 1;
+      } else { 
+        listIndex.value += 1;
+        // removeFocus();
+      }
+      break
+    case 'ArrowUp' :
+      if (listIndex.value === 0) {
+        listIndex.value = 0
+      } else { 
+        listIndex.value -= 1;
+        // removeFocus(); 
+      }
+      break
+    case 'Enter' || 'NumpadEnter' :
+    sendAutoCompleteResults(infoList.value[listIndex.value])
+      break
+  }
+}
+function removeFocus() {
+  emits('removeFocus');
+}
 onMounted(()=>{
-
+  window.addEventListener('keydown',(e)=>{keyboardChoose(e)})
 })
 // export default {
 //   props: ['inputData', 'isFocus'],
