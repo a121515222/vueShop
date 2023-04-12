@@ -1,12 +1,48 @@
-<script>
+<script setup>
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore'
 
 const productsStore = useGetProductsStore();
 const { dataProducts } = storeToRefs(productsStore);
 
+const props = defineProps(['searchKeyWords', 'isFocus']);
+const emits = defineEmits(['autoCompleteResult'])
 
+const isMouseIn = ref(false);
+
+const infoList = ref([]);
+function autoComplete(keywords) {
+  if(keywords.length > 0) {
+    keywords.forEach((keyWord)=>{
+      dataProducts.value.forEach((product)=>{
+        if(product.title.includes(keyWord)
+        || product.category.includes(keyWord)
+        || product.content.includes(keyWord)
+        || product.description.includes(keyWord)){
+          infoList.value.push(product.title);
+        }
+      });
+    });
+  }
+  console.log('infoList',infoList.value)
+}
+function sendAutoCompleteResults(keyWord) {
+  emits('autoCompleteResult', keyWord)
+}
+watch(()=>props.searchKeyWords, (newValue, oldValue) =>{
+  if(newValue !== '' && newValue !== oldValue) {
+    console.log('autoKeyWords',newValue)
+    const keysWords = newValue.trim().split(' ');
+    autoComplete(keysWords);
+  } else if(newValue === '') {
+    infoList.value = [];
+  }
+})
+
+const keyWordListRef = ref();
+function mouseoverHover(){}
+function mouseleaveCancelHover(){}
 // export default {
 //   props: ['inputData', 'isFocus'],
 //   emits: ['sendAutoCompleteResult', 'sendInfoBlank'],
@@ -97,16 +133,17 @@ const { dataProducts } = storeToRefs(productsStore);
 
 <template>
   <ul  class="autoUl position-absolute top-100 w-100 w-sm-33 w-sm-50"
-  v-if="inFoList.length > 0 && (isFocus || isMouseIn)"
+  v-if="infoList.length > 0 && (props.isFocus || isMouseIn)"
   >
     <li class="auto py-0" style="height:36px"
-    v-for="(item,index) in inFoList"
-    :key="item+index"
+    ref="keyWordListRef"
+    v-for="(keyWord,index) in infoList"
+    :key="keyWord+index"
     :class="{'autoBackground' : (index === listIndex)}"
-    @click="sendAutoComplete(item);"
+    @click="sendAutoCompleteResults(keyWord);"
     @mouseover="mouseoverHover(index)"
     @mouseleave="mouseleaveCancelHover(index)">
-      <p class="py-1 my-0">{{item}}</p>
+      <p class="py-1 my-0">{{keyWord}}</p>
     </li>
   </ul>
 </template>

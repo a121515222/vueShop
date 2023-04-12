@@ -52,18 +52,15 @@ watch(dataProducts,(newValue, oldValue)=>{
 },{deep: true});
 const recommendProducts = ref([]);
 function recommendProduct() { 
-  // 推薦商品功能
-  //recommend
-  if(dataProducts.value.products){
+  if(dataProducts.value){
   recommendProducts.value = [];
-  dataProducts.value.products.forEach((product) =>{
+  dataProducts.value.forEach((product) =>{
     if(keyWords.value.includes(product.category) || keyWords.value.includes(product.content) || keyWords.value.includes(product.description)){
       recommendProducts.value.push(product);
     }
   })
     recommendProducts.value = [...new Set(recommendProducts.value)];
   }
-  
 }
 function cartAddInfo(res, title, unit){
   switch (res.data.message) {
@@ -88,13 +85,12 @@ function cartAddInfo(res, title, unit){
 }
 onMounted(()=>{
   getProductData();
+  recommendProduct();
 })
 
 </script>
 <template>
-  <div class="container pt-3"
-  
-  >
+  <div class="container pt-10">
     <VueLoading :active="isProductLoading" :z-index="1060"/>
     <div class="row card flex-md-row mx-0">
       <div class="col-12 col-lg-6 ps-0">

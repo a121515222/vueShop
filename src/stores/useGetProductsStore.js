@@ -45,7 +45,6 @@ function searchKeyWordsResults(keyWords) {
       if (product.title.includes(keyWord) ||
           product.category.includes(keyWord) ||
           product.content.includes(keyWord) ||
-          product.unit.includes(keyWord) ||
           product.description.includes(keyWord)) {
         return true;
       }

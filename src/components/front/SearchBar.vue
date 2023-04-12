@@ -1,6 +1,5 @@
-
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import AutoComplete from './AutoComplete.vue'
 
@@ -9,6 +8,8 @@ const { showMyFavorites, getProducts, searchResults, sortResultsHightToLow, sort
 
 const favorites = JSON.parse(localStorage.getItem('myFavoritesItem')) || [];
 
+const isInputFocused = ref(false);
+
 function cleanSearch() {
   minPrice.value = null;
   maxPrice.value = null;
@@ -16,12 +17,16 @@ function cleanSearch() {
   getProducts();
 }
 const searchKeyWords = ref('');
+
 const minPrice = ref(null);
 const maxPrice = ref(null);
 function search() {
   const keywords = searchKeyWords.value.trim().split(' ');
   console.log('searchbar min',minPrice.value, 'searchbar max', maxPrice.value);
-  searchResults(keywords, minPrice.value, maxPrice.value);
+  searchResults(keywords.value, minPrice.value, maxPrice.value);
+}
+function writeSearchKeyWord(keyword) {
+  searchKeyWords.value = keyword;
 }
 // export default {
 //   emits: ['sendSearchInfo', 'searchInfo', 'minPrice', 'maxPrice', 'hight-to-low', 'low-to-hight', 'showMyFavorites'],
@@ -83,13 +88,13 @@ function search() {
 <template>
   <div class="input-group pt-10">
     <input  class="form-control w-sm-50 position-relative searchBarPlaceholderStyle" ref="searchInput" type="text"
-    @focus="inputFocused = true; enterCounter = 0 ;"
-    @blur="inputFocused=false"
-    v-model.lazy="searchKeyWords" placeholder="請輸入關鍵字">
+    @focus="isInputFocused = true; enterCounter = 0 ;"
+    @blur="isInputFocused=false"
+    v-model="searchKeyWords" placeholder="請輸入關鍵字">
     <AutoComplete
-    :inputData="searchInfo"
-    :is-focus="inputFocused"
-    @sendAutoCompleteResult="writeSearchInfo"
+    :search-key-words="searchKeyWords"
+    :is-focus="isInputFocused"
+    @sendAutoCompleteResult="writeSearchKeyWord"
     @sendInfoBlank="cleanSearch"
     />
     <input class="form-control w-sm-25 searchBarPlaceholderStyle" type="number"  placeholder="請輸入最低價格" v-model.number="minPrice">
