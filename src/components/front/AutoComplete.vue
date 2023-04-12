@@ -65,7 +65,6 @@ function keyboardChoose(e) {
         listIndex.value = infoList.value.length - 1;
       } else { 
         listIndex.value += 1;
-        // removeFocus();
       }
       break
     case 'ArrowUp' :
@@ -73,16 +72,12 @@ function keyboardChoose(e) {
         listIndex.value = 0
       } else { 
         listIndex.value -= 1;
-        // removeFocus(); 
       }
       break
     case 'Enter' || 'NumpadEnter' :
     sendAutoCompleteResults(infoList.value[listIndex.value])
       break
   }
-}
-function removeFocus() {
-  emits('removeFocus');
 }
 onMounted(()=>{
   window.addEventListener('keydown',(e)=>{keyboardChoose(e)})
