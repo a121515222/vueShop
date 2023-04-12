@@ -1,6 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { ref, defineProps, defineEmits, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore'
 
 const productsStore = useGetProductsStore();
@@ -12,9 +12,9 @@ const emits = defineEmits(['autoCompleteResult'])
 const isMouseIn = ref(false);
 
 const infoList = ref([]);
-function autoComplete(keywords) {
-  if(keywords.length > 0) {
-    keywords.forEach((keyWord)=>{
+function autoComplete(keyWords) {
+  if(keyWords.length > 0) {
+    keyWords.forEach((keyWord)=>{
       dataProducts.value.forEach((product)=>{
         if(product.title.includes(keyWord)
         || product.category.includes(keyWord)
@@ -24,15 +24,21 @@ function autoComplete(keywords) {
         }
       });
     });
+    infoList.value = [...new Set(infoList.value)]
+    infoList.value = infoList.value.filter((list)=>{
+      if(list !== keyWords[0]) {
+        return true;
+      }
+    });
   }
-  console.log('infoList',infoList.value)
 }
 function sendAutoCompleteResults(keyWord) {
-  emits('autoCompleteResult', keyWord)
+  emits('autoCompleteResult', keyWord);
+  isMouseIn.value = false;
+  infoList.value = [];
 }
 watch(()=>props.searchKeyWords, (newValue, oldValue) =>{
   if(newValue !== '' && newValue !== oldValue) {
-    console.log('autoKeyWords',newValue)
     const keysWords = newValue.trim().split(' ');
     autoComplete(keysWords);
   } else if(newValue === '') {
@@ -41,8 +47,18 @@ watch(()=>props.searchKeyWords, (newValue, oldValue) =>{
 })
 
 const keyWordListRef = ref();
-function mouseoverHover(){}
-function mouseleaveCancelHover(){}
+function mouseoverHover(index){
+  // console.log(keyWordListRef.value[index])
+  keyWordListRef.value[index].classList.add('autoBackground');
+  isMouseIn.value = true;
+}
+function mouseleaveCancelHover(index){
+  keyWordListRef.value[index].classList.remove('autoBackground');
+  isMouseIn.value = false;
+}
+onMounted(()=>{
+
+})
 // export default {
 //   props: ['inputData', 'isFocus'],
 //   emits: ['sendAutoCompleteResult', 'sendInfoBlank'],
@@ -140,7 +156,7 @@ function mouseleaveCancelHover(){}
     v-for="(keyWord,index) in infoList"
     :key="keyWord+index"
     :class="{'autoBackground' : (index === listIndex)}"
-    @click="sendAutoCompleteResults(keyWord);"
+    @click="sendAutoCompleteResults(keyWord)"
     @mouseover="mouseoverHover(index)"
     @mouseleave="mouseleaveCancelHover(index)">
       <p class="py-1 my-0">{{keyWord}}</p>

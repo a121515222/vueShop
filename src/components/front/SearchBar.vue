@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore';
 import AutoComplete from './AutoComplete.vue'
 
@@ -94,7 +94,7 @@ function writeSearchKeyWord(keyword) {
     <AutoComplete
     :search-key-words="searchKeyWords"
     :is-focus="isInputFocused"
-    @sendAutoCompleteResult="writeSearchKeyWord"
+    @autoCompleteResult="writeSearchKeyWord"
     @sendInfoBlank="cleanSearch"
     />
     <input class="form-control w-sm-25 searchBarPlaceholderStyle" type="number"  placeholder="請輸入最低價格" v-model.number="minPrice">

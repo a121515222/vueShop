@@ -42,10 +42,10 @@ function showMyFavorites() {
 function searchKeyWordsResults(keyWords) {
   dataProducts.value = dataProducts.value.filter((product) => {
     for (const keyWord of keyWords) {
-      if (product.title.includes(keyWord) ||
-          product.category.includes(keyWord) ||
-          product.content.includes(keyWord) ||
-          product.description.includes(keyWord)) {
+      if (product.title.includes(keyWord)
+      || product.category.includes(keyWord)
+      || product.content.includes(keyWord)
+      || product.description.includes(keyWord)) {
         return true;
       }
     }
