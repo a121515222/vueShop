@@ -9,10 +9,18 @@ const apiArticles = {
      const data = await axios.get(`${api}/api/${path}/articles`);
      return data.data
 
-   } catch (error) {
-     console.log(error)
-   }
-   }
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  async getSingleData(id) {
+    try {
+      const data = await axios.get(`${api}/api/${path}/article/${id}`);
+      return data
+    } catch (error) {
+      console.log(error);
+    }
+  }
  }
  
  export default apiArticles 

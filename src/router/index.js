@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  linkActiveClass: 'active',
+  scrollBehavior (to, from, savedPosition) { return savedPosition || { top: 0 } },
   routes: [
     {
       path: '/',
@@ -24,6 +26,12 @@ const router = createRouter({
           path: 'product/:id',
           component: () => import('../views/front/ProductView.vue'),
           meta: { title: 'Product' }
+        },
+        {
+          path: 'articles',
+          name: 'Articles',
+          component: () => import('../views/front/ArticlesView.vue'),
+          meta: { title: 'Articles' }
         },
       ]
     }
