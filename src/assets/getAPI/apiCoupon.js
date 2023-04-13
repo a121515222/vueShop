@@ -6,9 +6,10 @@ const apiCoupon = {
   async sendCoupon(sendData) {
     try {
       const data = await axios.post(`${api}/api/${path}/coupon`, sendData);
-      return data;
+      return data.data;
     } catch (error) {
       console.log(error);
+      return error.response.data;
     }
   }
 }

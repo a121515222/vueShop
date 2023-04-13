@@ -1,25 +1,23 @@
 <script setup>
-// 匯入 vee-validate 主套件
-import { Form, Field, ErrorMessage, configure } from 'vee-validate'
-// 匯入 vee-validate 在地化
-import { localize, setLocale } from '@vee-validate/i18n'
-// 匯入繁體中文語系檔案
-import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json'
-
-import { useCouponStore } from '../../stores/useCouponStore';
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useCouponStore } from '../../stores/useCouponStore';
+import { useGetCartStore } from '../../stores/useGetCartStore';
+import { useInfoStore } from '../../stores/useInfoStore';
+
 const couponStore = useCouponStore();
 const { useCoupon } = couponStore;
 
-configure({ // 用來做一些設定
-  generateMessage: localize({ zh_TW: zhTW }), // 啟用 locale
-  validateOnInput: true // 調整為：輸入文字時，就立即進行驗證
-})
+const cartStore = useGetCartStore();
+const { getCarts } = cartStore;
+const { cartLength } = storeToRefs(cartStore);
 
-// 設定預設語系
-setLocale('zh_TW')
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
+
 const isLoading = ref(false);
 const couponCode = ref('');
+
 async function sendCoupon() {
   isLoading.value = true;
   if(couponCode.value === '') {
@@ -30,16 +28,25 @@ async function sendCoupon() {
     try {
       const data = await useCoupon(sendData);
       console.log('sendCoupon', data);
+      addMessage(
+        {
+          title: data.success ? '使用優惠券成功' :'使用優惠券失敗',
+          style: data.success ? 'success' :'danger',
+          content: `${data.message}`
+        }
+      );
+      getCarts();
+      couponCode.value = '';
       isLoading.value = false;
     } catch (error) {
-      console.log(error);
+      
       isLoading.value = false;
+      console.log(error);
     }
-
   }
-
-  
 }
+
+
 
 // export default {
 //   props: ['cartLength', 'cartLoading'],
@@ -119,31 +126,18 @@ async function sendCoupon() {
 </script>
 
 <template>
-  <Form class="from-group" ref="couponForm"
-   v-slot="{errors}">
+  <div class="from-group" ref="couponForm">
     <div class="position-relative d-flex flex-row">
-      <Field
-      id="code"
-      name="優惠碼"
-      type="text"
-      class="form-control"
-      :class="{'is-invalid': errors['優惠碼'], buttonDisabledCursor : Object.keys(errors).length > 0 }"
-      placeholder="請輸入優惠碼"
-      :rules="couponCheck"
-      v-model.lazy.trim="couponCode"
-      :disabled="false"
-      >
-      </Field>
-      <ErrorMessage name="優惠碼" class="invalid-feedback" style="position:absolute; left:14px ;bottom:-20px"></ErrorMessage>
+      <input type="text" class="form-control" v-model.trim="couponCode" placeholder="請輸入優惠碼">
       <button class="btn btn-primary text-white text-nowrap h-100" type="button"
       @click= "sendCoupon"
-      :disabled="cartLength === 0 || couponCode === '' || Object.keys(errors).length > 0 || isSend"
-      :class="{buttonDisabledCursor :cartLength === 0 || couponCode === '' || Object.keys(errors).length > 0}">
-      <span v-if= "isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      :disabled="cartLength === 0 || couponCode === '' || isLoading"
+      :class="{buttonDisabledCursor :cartLength === 0 || couponCode === ''}">
+        <span v-if= "isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       送出
-    </button>
+      </button>
     </div>
-  </Form>
+  </div>
 </template>
 
 

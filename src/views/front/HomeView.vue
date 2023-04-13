@@ -77,7 +77,7 @@ onUnmounted(()=>{
   <div class="container my-3">
     <!-- 產品交錯卡片 -->
     <div class="row gap-3">
-      <template v-for="(item, index) in dataProducts.products" :key ="item.title+index">
+      <template v-for="(item, index) in dataProducts" :key ="item.title+index">
         <div class="card flex-md-row flex-md-row-cross cardHover px-sm-0 "
         v-if ="item.title ==='台農1號百香果' || item.title ==='醜豆'">
           <div class="col-12 col-md-6">
@@ -104,7 +104,7 @@ onUnmounted(()=>{
           </div>
         </div>
       </template>
-      </div>
+    </div>
   </div>
   <div class="container-fluid px-0 my-3">
     <div class="middleBanner position-relative">

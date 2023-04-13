@@ -7,6 +7,7 @@ const apiProducts = {
   try {
     const data = await axios.get(`${api}/api/${path}/products/all`);
     return data.data
+    
   } catch (error) {
     console.log(error);
   }
