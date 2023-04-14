@@ -27,9 +27,35 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
       console.log(error);
     }
   }
+  function sortDateOldToNew() {
+    dataArticles.value.articles.sort((a, b) => {
+      return  b.create_at - a.create_at
+    });
+  }
+  function sortDateNewToOld() {
+    dataArticles.value.articles.sort((a, b) => {
+      return  a.create_at - b.create_at
+    });
+  }
+  function searchKeyWordsArticles(keyWords) {
+    dataArticles.value.articles = dataArticles.value.articles.filter((article) => {
+      for (const keyWord of keyWords) {
+        if (article.title.includes(keyWord)
+        || article.description.includes(keyWord)
+        || article.tag.includes(keyWord)) {
+          return true;
+        }
+      }
+      return false;
+    });
+  }
+
   return{
     dataArticles,
     isArticleLoading,
     getArticles,
+    sortDateOldToNew,
+    sortDateNewToOld,
+    searchKeyWordsArticles
   }
 })

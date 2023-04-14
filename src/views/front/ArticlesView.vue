@@ -7,10 +7,22 @@ import { useGetArticlesStore } from '../../stores/useGetArticlesStore';
 
 
 const articlesStore = useGetArticlesStore();
-const { getArticles } = articlesStore;
-const { dataArticles } = storeToRefs(articlesStore);
+const { getArticles, sortDateOldToNew, sortDateNewToOld, searchKeyWordsArticles } = articlesStore;
+const { dataArticles, isArticleLoading } = storeToRefs(articlesStore);
 
 const { getTime:showTime } = readTime;
+
+const keyWords = ref('');
+const inputFocused = ref(false);
+
+function writeSearchKeyWord(result){
+  keyWords.value = result;
+}
+function articleSearch(){
+  const searchKeyWords = keyWords.value.trim().split(' ');
+  searchKeyWordsArticles(searchKeyWords);
+  keyWords.value = '';
+}
 
 onMounted(()=>{
   getArticles();
@@ -105,37 +117,35 @@ onMounted(()=>{
 </script>
 
 <template>
-  <VueLoading :active="isLoadingPage" :z-index="1060"/>
   <div class="container pt-10 ">
     <div class="input-group position-relative">
       <input type="text"
-      v-model.lazy="keyWord"
+      v-model="keyWords"
       @focus="inputFocused=true"
       @blur="inputFocused = false"
       class="form-control" placeholder="請輸入關鍵字">
       <AutoComplete
-      :out-data="articles"
-      :inputData="keyWord"
-      :focus="inputFocused"
-      @sendAutoCompleteResult="search();searchArticle()"
+      :search-key-words="keyWords"
+      :is-focus="inputFocused"
+      @autoCompleteResult="writeSearchKeyWord"
       />
     </div>
   <div class="d-flex flex-column flex-sm-row justify-content-sm-end gap-2 pt-3">
     <button class="btn btn-primary text-secondary" type="button"
-    @click="sortNewToOld">
+    @click="sortDateNewToOld()">
       日期新到舊排序
     </button>
     <button class="btn btn-primary text-secondary" type="button"
-    @click="sortOldToNew">
+    @click="sortDateOldToNew()">
       日期舊到新排序
     </button>
     <button class="btn btn-primary text-secondary" type="button"
-    @click="this.keyWord = ''; this.showArticles = this.articles"
+    @click="articleSearch()"
     >
       清除搜尋
     </button>
     <button class="btn btn-primary text-secondary" type="button"
-    @click="searchArticle">
+    @click="articleSearch">
       搜尋
     </button>
   </div>

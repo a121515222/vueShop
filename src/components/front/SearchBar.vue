@@ -20,10 +20,9 @@ const searchKeyWords = ref('');
 
 const minPrice = ref(null);
 const maxPrice = ref(null);
-function search() {
+function searchProducts() {
   const keywords = searchKeyWords.value.trim().split(' ');
-  console.log('searchbar min',minPrice.value, 'searchbar max', maxPrice.value);
-  searchResults(keywords.value, minPrice.value, maxPrice.value);
+  searchResults(keywords, minPrice.value, maxPrice.value);
 }
 function writeSearchKeyWord(keyword) {
   searchKeyWords.value = keyword;
@@ -50,7 +49,7 @@ const searchInput = ref(null);
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="sortResultsHightToLow()" >價格由大至小排列</button>
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="sortResultsLowToHight()" >價格由小至大排列</button>
     <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="cleanSearch()">清除搜尋</button>
-    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="search()">搜尋</button>
+    <button type="button" class="btn btn-primary text-secondary text-nowrap" @click="searchProducts()">搜尋</button>
   </div>
 </template>
 

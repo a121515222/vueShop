@@ -2,9 +2,13 @@
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue';
 import { useGetProductsStore } from '../../stores/useGetProductsStore'
-
+import { useGetArticlesStore } from '../../stores/useGetArticlesStore';
+import { useRoute } from "vue-router";
 const productsStore = useGetProductsStore();
 const { dataProducts } = storeToRefs(productsStore);
+
+const articlesStore = useGetArticlesStore();
+const { dataArticles } = storeToRefs(articlesStore);
 
 const props = defineProps(['searchKeyWords', 'isFocus']);
 const emits = defineEmits(['autoCompleteResult', 'removeFocus'])
@@ -12,17 +16,37 @@ const emits = defineEmits(['autoCompleteResult', 'removeFocus'])
 const isMouseIn = ref(false);
 
 const infoList = ref([]);
+
+const route = useRoute();
+
 function autoComplete(keyWords) {
   if(keyWords?.length > 0) {
     keyWords.forEach((keyWord)=>{
-      dataProducts.value.forEach((product)=>{
-        if(product.title.includes(keyWord)
-        || product.category.includes(keyWord)
-        || product.content.includes(keyWord)
-        || product.description.includes(keyWord)){
-          infoList.value.push(product.title);
-        }
-      });
+      infoList.value = [];
+      switch(route.path){
+        case '/products' :
+          dataProducts.value.forEach((product)=>{
+          if(product.title.includes(keyWord)
+          || product.category.includes(keyWord)
+          || product.content.includes(keyWord)
+          || product.description.includes(keyWord))
+          {
+            infoList.value.push(product.title);
+          }
+          });
+          break
+        case '/articles' :
+          dataArticles.value.articles.forEach((article)=>{
+          if(article.title.includes(keyWord)
+          || article.description.includes(keyWord)
+          || article.tag.includes(keyWord)
+          )
+          {
+            infoList.value.push(article.title);
+          }
+        })
+          break
+      }
     });
     infoList.value = [...new Set(infoList.value)]
     infoList.value = infoList.value.filter((list)=>{

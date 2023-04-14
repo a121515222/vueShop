@@ -33,7 +33,6 @@ function showMyFavorites() {
   const myFavorites = JSON.parse(localStorage.getItem('myFavoritesItem'))
   dataProducts.value = dataProducts.value.filter((product)=>{
     if(myFavorites.includes(product.id)){
-      console.log('f product',product)
       return product
     }
   });
@@ -68,6 +67,7 @@ function searchByMaxPrice(maxPrice) {
   });
 }
 function searchResults(keyWords, minPrice, maxPrice) {
+  console.log('search',keyWords)
   if(keyWords){
     searchKeyWordsResults(keyWords);
   }
