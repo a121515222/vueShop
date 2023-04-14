@@ -33,6 +33,11 @@ const router = createRouter({
           component: () => import('../views/front/ArticlesView.vue'),
           meta: { title: 'Articles' }
         },
+        {
+          path: 'article/:id',
+          component: () => import('../views/front/ArticleView.vue'),
+          meta: { title: 'Article' }
+        },
       ]
     }
   ]

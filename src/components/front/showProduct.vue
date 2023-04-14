@@ -55,7 +55,6 @@ function guestProductDetail(id){
   productModalRef.value.modalOpen(id)
 }
 async function showProductsAddCart(id, title, unit){
-
   const sendData = {
   data: {
     product_id: id,

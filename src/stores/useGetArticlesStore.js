@@ -18,11 +18,15 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
       console.log(error);
     }
   }
-  async function getArticle() {
+  const singleArticle = ref([]);
+  async function getArticle(id) {
     try {
       isArticleLoading.value = true;
-      const resData = await getSingleData();
+      const resData = await getSingleData(id);
+      singleArticle.value = resData.data;
+      console.log('single article', resData);
       isArticleLoading.value = false;
+      return resData
     } catch (error) {
       console.log(error);
     }
@@ -52,8 +56,10 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
 
   return{
     dataArticles,
+    singleArticle,
     isArticleLoading,
     getArticles,
+    getArticle,
     sortDateOldToNew,
     sortDateNewToOld,
     searchKeyWordsArticles

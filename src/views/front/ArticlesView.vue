@@ -1,6 +1,7 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import readTime from '../../assets/methods/ReadTime'
 import AutoComplete from '../../components/front/AutoComplete.vue'
 import { useGetArticlesStore } from '../../stores/useGetArticlesStore';
