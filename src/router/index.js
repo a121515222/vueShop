@@ -38,6 +38,12 @@ const router = createRouter({
           component: () => import('../views/front/ArticleView.vue'),
           meta: { title: 'Article' }
         },
+        {
+          path: 'sendInfo',
+          name: 'SendInfo',
+          component: () => import('../views/front/SendInfoView.vue'),
+          meta: { title: 'SendInfo' }
+        },
       ]
     }
   ]

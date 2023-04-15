@@ -25,7 +25,6 @@ async function getArticleData() {
   getProducts();
   const res = await getArticle(id);
   keyWords.value = res.data.article.tag;
-  console.log('article keyWord',keyWords.value)
   recommendProduct();
 }
 
@@ -47,75 +46,6 @@ function recommendProduct() {
 onMounted(()=>{
   getArticleData();
 })
-
-// export default {
-//   data () {
-//     return {
-//       article: [],
-//       guestProduct: [],
-//       filterProducts: [],
-//       isGuestPageLoading: '',
-//       isLoading: false,
-//       isLoadingPage: false
-//     }
-//   },
-//   components: {
-//     GuestProductModal,
-//     ProductsShow
-//   },
-//   methods: {
-//     getId (id) {
-//       this.isGuestPageLoading = id
-//     },
-//     guestAddCart (id, title) {
-//       this.$refs.guestModal.addCart(id, title)
-//     },
-//     guestProductDetail (id) {
-//       this.$refs.guestModal.guestModalOpen(id)
-//     },
-//     showTime (time) {
-//       return getTime(time)
-//     },
-//     getArticle () {
-//       this.isLoadingPage = true
-//       const { id } = this.$route.params
-//       this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/article/${id}`).then((res) => {
-//         this.article = res.data.article
-//         this.getGuestProduct()
-//         this.isLoadingPage = false
-//       })
-//         .catch((error) => { console.dir(error) })
-//     },
-//     getGuestProduct () {
-//       this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/products/all`).then((res) => {
-//         this.guestProduct = res.data.products
-//         this.filterProduct()
-//       })
-//         .catch((err) => {
-//           console.dir(err.response.data.message)
-//         })
-//     },
-//     filterProduct () { // 推薦商品功能
-//       const keyword = this.article.tag
-//       keyword.forEach((item) => {
-//         this.guestProduct.forEach((i) => {
-//           if (i.category.indexOf(item) !== -1 || i.content.indexOf(item) !== -1 || i.description.indexOf(item) !== -1 ||
-//           i.title.indexOf(item) !== -1) {
-//             this.filterProducts.push(i)
-//             // 去除重複的資料
-//             // this.filterProducts = [...new Set(this.filterProducts)]
-//             this.filterProducts = this.filterProducts.filter((item, index) => {
-//               return this.filterProducts.indexOf(item) === index
-//             })
-//           }
-//         })
-//       })
-//     }
-//   },
-//   mounted () {
-//     this.getArticle()
-//   }
-// }
 </script>
 <template>
   

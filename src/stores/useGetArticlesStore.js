@@ -24,7 +24,6 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
       isArticleLoading.value = true;
       const resData = await getSingleData(id);
       singleArticle.value = resData.data;
-      console.log('single article', resData);
       isArticleLoading.value = false;
       return resData
     } catch (error) {
