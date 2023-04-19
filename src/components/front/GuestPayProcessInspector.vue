@@ -1,3 +1,8 @@
+<script setup>
+const props = defineProps(['currentStatus', 'payment']);
+
+</script>
+
 <template>
   <div class="container my-2">
     <div class="shoppingProcess d-flex justify-content-center align-items-center">
@@ -19,13 +24,7 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: ['currentStatus', 'payment'],
-  mounted () {
-  }
-}
-</script>
+
 
 <style lang="scss">
 @import '../../assets/stylesheet/helper/color.scss';

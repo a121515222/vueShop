@@ -12,7 +12,6 @@ export const useGetArticlesStore = defineStore('storeArticles', ()=>{
       isArticleLoading.value = true;
       const resData = await getData();
       dataArticles.value = resData;
-      console.log('useArticle', resData);
       isArticleLoading.value = false;
     } catch (error) {
       console.log(error);

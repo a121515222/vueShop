@@ -44,6 +44,12 @@ const router = createRouter({
           component: () => import('../views/front/SendInfoView.vue'),
           meta: { title: 'SendInfo' }
         },
+        {
+          path: 'guestOrderPay/:id',
+          name: 'GuestOrderPay',
+          component: () => import('../views/Front/GuestOrderPay.vue'),
+          meta: { title: 'GuestOrderPay' }
+        },
       ]
     }
   ]

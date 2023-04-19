@@ -1,18 +1,9 @@
-<script>
+<script setup>
 import InputForm from '../../components/front/InputForm.vue'
 import GuestPayProcessInspector from '../../components/front/GuestPayProcessInspector.vue'
 
-export default {
-  data () {
-    return {
-      inputInfo: 'inputInfo'
-    }
-  },
-  components: {
-    InputForm,
-    GuestPayProcessInspector
-  }
-}
+const inputInfo = 'inputInfo';
+
 </script>
 <template>
   <div class="container pt-9 mb-3">
