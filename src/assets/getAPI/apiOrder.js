@@ -15,7 +15,6 @@ const apiOrder = {
   async getOrder(id) {
     try {
       const res = await axios.get(`${api}/api/${path}/order/${id}`);
-      console.log('getOrder',res)
       return res
     } catch (error) {
       console.log(error);

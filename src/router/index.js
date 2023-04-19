@@ -50,6 +50,12 @@ const router = createRouter({
           component: () => import('../views/Front/GuestOrderPay.vue'),
           meta: { title: 'GuestOrderPay' }
         },
+        {
+          path: 'guestOrderFinished',
+          name: 'GuestOrderFinished',
+          component: () => import('../views/Front/GuestOrderFinished.vue'),
+          meta: { title: 'GuestOrderFinished' }
+        },
       ]
     }
   ]

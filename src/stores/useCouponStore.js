@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref } from 'vue';
 import apiCoupon from "../assets/getAPI/apiCoupon";
 const { sendCoupon } = apiCoupon;
 
