@@ -1,9 +1,22 @@
-<script>
-import { mapActions } from 'pinia'
+<script setup>
+import { mapActions, storeToRefs } from 'pinia'
+import { useGetOrderStore } from '../../stores/useGetOrderStore';
+import { useRoute } from "vue-router";
 // import toastStore from '@/stores/toast'
 // import cartStore from '@/stores/cart'
 import GuestPayProcessInspector from '../../components/front/GuestPayProcessInspector.vue'
+import { onMounted, ref } from 'vue';
+//http://127.0.0.1:5173/guestOrderPay/-NTNcxVw0IdREohWK8NS
 
+const storeOrder = useGetOrderStore();
+const { getOrderInfo } = storeOrder;
+const { order } = storeToRefs(storeOrder);
+
+const route = useRoute();
+const { id } = route.params;
+onMounted(()=>{
+  getOrderInfo(id);
+})
 // export default {
 //   data () {
 //     return {
@@ -96,7 +109,7 @@ import GuestPayProcessInspector from '../../components/front/GuestPayProcessInsp
                 <th>價格</th>
               </tr>
             </thead>
-            <tbody v-for="(item) in products" :key="item.id">
+            <tbody v-for="(item) in order.products" :key="item.id">
               <tr>
                 <td>{{item.product.title}}</td>
                 <td>{{item.qty}}</td>
@@ -106,7 +119,7 @@ import GuestPayProcessInspector from '../../components/front/GuestPayProcessInsp
             </tbody>
           </table>
           <div class="d-flex w-100 flex-row-reverse">
-            <span>小計:{{total}}元</span>
+            <span>小計:{{order.total}}元</span>
           </div>
        </div>
         <h2 class="mb-3  border-bottom border-2">訂購者資訊</h2>
@@ -115,26 +128,26 @@ import GuestPayProcessInspector from '../../components/front/GuestPayProcessInsp
             <tbody>
               <tr>
                 <th>姓名</th>
-                <td>{{user.name}}</td>
+                <td>{{order.user?.name}}</td>
               </tr>
               <tr>
                 <th>電話</th>
-                <td>{{user.tel}}</td>
+                <td>{{order.user?.tel}}</td>
               </tr>
               <tr>
                 <th>住址</th>
-                <td>{{user.address}}</td>
+                <td>{{order.user?.address}}</td>
               </tr>
               <tr>
                 <th>付款狀態</th>
-                <td :class="{'text-success':is_paid, 'text-danger':!is_paid}">{{is_paid? '已付款':'未付款'}}</td>
+                <td :class="{'text-success':order.is_paid, 'text-danger':!order.is_paid}">{{order.is_paid? '已付款':'未付款'}}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
-    <template v-if="!is_paid">
+    <template v-if="!order.is_paid">
       <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
           <h2 class="mb-3  border-bottom border-2">選擇付款方式</h2>
