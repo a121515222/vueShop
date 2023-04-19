@@ -47,7 +47,6 @@ onMounted(()=>{
       </template>
     </ul>
   </div>
-  <h1>picture wall</h1>
 </template>
 
 
