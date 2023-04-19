@@ -57,6 +57,11 @@ const router = createRouter({
           meta: { title: 'GuestOrderFinished' }
         },
       ]
+    },
+    {
+      path: '/:matchPath(.*)*',
+      name: 'FindNoPage',
+      component: () => import('../views/front/FindNoPage.vue')
     }
   ]
 })
