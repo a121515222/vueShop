@@ -47,14 +47,20 @@ const router = createRouter({
         {
           path: 'guestOrderPay/:id',
           name: 'GuestOrderPay',
-          component: () => import('../views/Front/GuestOrderPay.vue'),
+          component: () => import('../views/Front/GuestOrderPayView.vue'),
           meta: { title: 'GuestOrderPay' }
         },
         {
           path: 'guestOrderFinished',
           name: 'GuestOrderFinished',
-          component: () => import('../views/Front/GuestOrderFinished.vue'),
+          component: () => import('../views/Front/GuestOrderFinishedView.vue'),
           meta: { title: 'GuestOrderFinished' }
+        },
+        {
+          path: 'guestOrderLists',
+          name: 'GuestOrderLists',
+          component: () => import('../views/Front/GuestOrderListsView.vue'),
+          meta: { title: 'GuestOrderLists' }
         },
       ]
     },

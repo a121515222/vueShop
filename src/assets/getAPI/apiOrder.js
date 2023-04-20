@@ -20,6 +20,24 @@ const apiOrder = {
       console.log(error);
       return error
     }
+  },
+  async getOrders() {
+    try {
+      const res = await axios.get(`${api}/api/${path}/orders`);
+      return res.data
+    } catch (error) {
+      console.log(error);
+      return error
+    }
+  },
+  async getOrdersByPage(page) {
+    try {
+      const res = await axios.get(`${api}/api/${path}/orders?page=${page}`);
+      return res.data
+    } catch (error) {
+      console.log(error);
+      return error
+    }
   }
 }
 export default apiOrder

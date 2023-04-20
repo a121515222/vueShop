@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useGetOrderStore } from '../../stores/useGetOrderStore';
 import { usePayStore } from '../../stores/usePayStore';
 import { useInfoStore } from '../../stores/useInfoStore';
+import { useGetCartStore } from '../../stores/useGetCartStore';
 import { useRoute, useRouter } from "vue-router";
 import GuestPayProcessInspector from '../../components/front/GuestPayProcessInspector.vue'
 import { onMounted, ref } from 'vue';
@@ -14,6 +15,9 @@ const { order, isOrderLoading } = storeToRefs(orderStore);
 const payStore = usePayStore();
 const { payMent } = payStore;
 const { isPayLoading } = storeToRefs(payStore);
+
+const cartStore = useGetCartStore();
+const { getCarts } = cartStore;
 
 const infoStore = useInfoStore();
 const { addMessage } = infoStore;
@@ -46,7 +50,10 @@ async function toPay() {
 }
 
 onMounted(()=>{
+  
   getOrderInfo(id);
+  getCarts();
+  
 });
 </script>
 
