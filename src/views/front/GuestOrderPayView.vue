@@ -50,7 +50,6 @@ async function toPay() {
 }
 
 onMounted(()=>{
-  
   getOrderInfo(id);
   getCarts();
   

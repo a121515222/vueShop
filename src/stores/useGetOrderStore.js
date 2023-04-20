@@ -5,6 +5,7 @@ const { sendOrder, getOrder, getOrders, getOrdersByPage } = apiOrder;
 const order = ref({});
 const orderList = ref([]);
 const pagination = ref({});
+const getOrderListErrorMessage = ref('');
 const isOrderLoading = ref(false)
 export const useGetOrderStore = defineStore('storeOrder',()=>{
   async function sendOrderList(sendData) {
@@ -32,6 +33,7 @@ export const useGetOrderStore = defineStore('storeOrder',()=>{
       const res = await getOrders();
       orderList.value = res.orders;
       pagination.value = res.pagination;
+      getOrderListErrorMessage.value = res.response?.data;
       isOrderLoading.value = false;
       return res
     } catch (error) {
@@ -60,6 +62,7 @@ export const useGetOrderStore = defineStore('storeOrder',()=>{
     order,
     isOrderLoading,
     orderList,
-    pagination
+    pagination,
+    getOrderListErrorMessage
   }
 });

@@ -2,14 +2,18 @@
 import PaginationComponent from '../../components/PaginationComponent.vue'
 import readTime from '../../assets/methods/ReadTime'
 import { useGetOrderStore } from '../../stores/useGetOrderStore';
-import { mapActions, storeToRefs } from 'pinia'
-import { onMounted } from 'vue';
+import { useInfoStore } from '../../stores/useInfoStore';
+import { storeToRefs } from 'pinia'
+import { onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
-
 
 const orderStore = useGetOrderStore();
 const { getOrderLists, getOrderListsByPage } = orderStore;
-const { orderList, isOrderLoading, pagination } = storeToRefs(orderStore);
+const { orderList, isOrderLoading, pagination, getOrderListErrorMessage } = storeToRefs(orderStore);
+
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
+
 const { getTime : showTime} = readTime;
 const router = useRouter();
 
@@ -21,63 +25,20 @@ function goToOrder(id) {
   router.push(`/guestOrderPay/${id}`);
 }
 
+watch(getOrderListErrorMessage,(newValue, oldValue) =>{
+  if(newValue?.success === false) {
+    addMessage(
+      {
+        title: '取得訂單列表結果',
+        style: 'danger',
+        content: `${newValue.message}`
+      }
+    )
+  }
+})
 onMounted(()=>{
   getOrderLists();
 })
-
-// export default {
-//   data () {
-//     return {
-//       orders: [
-//         {
-//           user: {
-//             name: '',
-//             tel: '',
-//             address: ''
-//           }
-//         }],
-//       pagination: {},
-//       isLoadingPage: false
-//     }
-//   },
-//   components: {
-//     PaginationComponent
-//   },
-//   methods: {
-//     ...mapActions(toastStore, ['addMessage']),
-//     ...mapActions(cartStore, ['getCart']),
-//     showTime (time) {
-//       return getTime(time)
-//     },
-//     goToOrder (id) {
-//       this.$router.push(`/guestOrderPay/${id}`)
-//     },
-//     getOrder () {
-//       this.isLoading = true
-//       this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/orders`)
-//         .then((res) => {
-//           this.isLoadingPage = false
-//           this.orders = res.data.orders
-//           this.pagination = res.data.pagination
-//         })
-//         .catch((err) => {
-//           this.isLoadingPage = false
-//           console.log(err.response.data.message)
-//           this.addMessage(
-//             {
-//               title: '取得訂單列表結果',
-//               style: 'danger',
-//               content: `${err.response.data.message}`
-//             }
-//           )
-//         })
-//     }
-//   },
-//   mounted () {
-//     this.getOrder()
-//     this.getCart()
-//   }
-// }
 </script>
 
 <template>
