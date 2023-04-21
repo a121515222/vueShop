@@ -28,34 +28,6 @@ async function login() {
   user.value.username = '';
   router.push('/admin');
 }
-// export default {
-//   data () {
-//     return {
-//       user: {
-//         username: '',
-//         password: ''
-//       }
-//     }
-//   },
-//   methods: {
-//     login () {
-//       if (this.user.username !== '' && this.user.password !== '') {
-//         this.$http.post(`${process.env.VUE_APP_API}/admin/signin`, this.user).then((res) => {
-//           // 把token存到cookie
-//           document.cookie = `myHextoken= ${res.data.token}; expires= ${new Date(res.data.expired)}`
-//           // 轉跳頁面到產品資料頁
-//           this.$router.push('/admin/adminProducts')
-//         }).catch((err) => {
-//           alert(err.response.data.message)
-//         })
-//       } else {
-//         alert('請輸入帳號與密碼')
-//         this.user.value.username = ''
-//         this.user.value.password = ''
-//       }
-//     }
-//   }
-// }
 </script>
 
 <template>

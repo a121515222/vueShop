@@ -1,36 +1,50 @@
-<script>
-export default {
-  data () {
-    return {
-      logInResult: false
-    }
-  },
-  methods: {
-    logInspection () {
-      const myToken = document.cookie.replace(/(?:(?:^|.*;\s*)myHextoken\s*=\s*([^;]*).*$)|^.*$/, '$1')
-      this.$http.defaults.headers.common.Authorization = myToken
-      this.$http.post(`${process.env.VUE_APP_API}/api/user/check`, { api_token: myToken }).then((res) => {
-        this.logInResult = true
-      }).catch((err) => {
-        console.dir(err.response)
-        alert('請重新登入')
-        this.$router.push('/logIn')
-      })
-    },
-    logOut () {
-      this.$http.post(`${process.env.VUE_APP_API}/api/user/check`).then((res) => {
-        document.cookie = `myHextoken= ''; expires= ${new Date()}`
-        alert('已成功登出')
-        this.$router.push('/logIn')
-      }).catch((err) => {
-        console.dir(err.response.data.message)
-      })
-    }
-  },
-  mounted () {
-    this.logInspection()
+<script setup>
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useInfoStore } from '../../stores/useInfoStore';
+import loginApi from '../../assets/adminAPI/apiLogin.js'
+
+const { loginCheck, logoutAdmin } = loginApi; 
+const logInResult = ref(false);
+
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
+
+const router = useRouter();
+const isLoadingPage = ref(false);
+
+async function logInspection() {
+  const myToken = document.cookie.replace(/(?:(?:^|.*;\s*)myHextoken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+  axios.defaults.headers.common.Authorization = myToken;
+  isLoadingPage.value = true;
+  const res = await loginCheck(myToken);
+  if(res.data?.success) {
+    isLoadingPage.value = false;
+  } else if(res.response.data.success === false) {
+    isLoadingPage.value = false;
+    alert('請重新登入');
+    router.push('/logIn');
   }
 }
+async function logOut() {
+  const res = await logoutAdmin();
+  if(res.data.success) {
+    document.cookie = `myHextoken= ''; expires= ${new Date()}`;
+    addMessage(
+      {
+        title: '登出結果',
+        style: 'success',
+        content: `${res.data.message}`
+      }
+    )
+    router.push('/logIn');
+  }
+}
+onMounted(()=>{
+  logInspection();
+});
+
 </script>
 <template>
   <VueLoading :active="isLoadingPage" :z-index="1060"/>
