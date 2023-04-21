@@ -1,5 +1,5 @@
 import axios from 'axios';
-import apiVar from './apiVar.js'
+import apiVar from '../apiVar.js'
 const { api, path } = apiVar
 
 const apiCoupon = {

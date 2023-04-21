@@ -65,6 +65,19 @@ const router = createRouter({
       ]
     },
     {
+      path: '/logIn',
+      name: 'LogIn',
+      component: () => import('../views/admin/LogInView.vue'),
+      meta: { title: 'LogIn' }
+    },
+    {
+      path: '/admin',
+      name: 'DashBoard',
+      component: () => import('../views/admin/DashBoardView.vue'),
+      meta: { title: 'DashBoard' },
+      children: []
+    },
+    {
       path: '/:matchPath(.*)*',
       name: 'FindNoPage',
       component: () => import('../views/front/FindNoPage.vue')
