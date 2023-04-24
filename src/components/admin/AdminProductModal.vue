@@ -10,7 +10,7 @@ const { addMessage } = useInfoStore();
 
 
 const props = defineProps(['inputProduct', 'isNew']);
-const emits = defineEmits(['sendInputData', 'sendCloseResetInput']);
+const emits = defineEmits(['sendInputData']);
 const productAdminModalRef = ref(null);
 const upLoadFileRef = ref(null);
 const bsModal = ref(null);
@@ -96,102 +96,6 @@ function deleteImg() {
 onMounted(()=>{
   bsModal.value = new BsModal(productAdminModalRef.value);
 })
-// import toastStore from '@/stores/toast'
-
-// export default {
-//   props: ['inputProduct', 'isNew'],
-//   data () {
-//     return {
-//       inputData: {
-//         imagesUrl: []
-//       },
-//       bsModal: '',
-//       isLoading: false,
-//       editor: ClassicEditor,
-//       editorConfig: {
-//         toolbar: ['heading', 'bold', 'italic', '|', 'link']
-//       }
-//     }
-//   },
-//   emits: ['send-input-data', 'send-close-resetInput'],
-//   methods: {
-//     // ...mapActions(toastStore, ['addMessage']),
-//     uploadImg () {
-//       this.isLoading = true
-//       const uploadFile = this.$refs.upLoadFile.files[0]
-//       const formData = new FormData()
-//       formData.append('file-to-upload', uploadFile)
-//       this.$http.post(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/upload`, formData)
-//         .then((res) => {
-//           if (this.inputData.imageUrl === undefined || '') {
-//             this.inputData.imageUrl = res.data.imageUrl
-//           } else if (this.inputData.imageUrl !== '' && this.inputData.imagesUrl.length < 6) {
-//             if (this.inputData.imagesUrl.length < 6) {
-//               this.inputData.imagesUrl.push(res.data.imageUrl)
-//             }
-//           }
-//           this.isLoading = false
-//           this.addMessage(
-//             {
-//               title: '上傳圖片結果',
-//               style: 'success',
-//               content: '上傳成功'
-//             }
-//           )
-//           this.$refs.upLoadFile.value = ''
-//         })
-//         .catch((err) => {
-//           this.isLoading = false
-//           console.dir(err)
-//           if (this.inputData.imagesUrl.length === 5) {
-//             this.addMessage(
-//               {
-//                 title: '上傳圖片結果',
-//                 style: 'danger',
-//                 content: '上傳失敗，已達最大上傳圖片數'
-//               }
-//             )
-//           } else {
-//             this.addMessage(
-//               {
-//                 title: '上傳圖片結果',
-//                 style: 'danger',
-//                 content: '上傳失敗'
-//               }
-//             )
-//           }
-//         })
-//     },
-//     open () {
-//       this.bsModal.show()
-//     },
-//     close () {
-//       this.bsModal.hide()
-//       // 每次關閉都會重製外層的inputProductout
-//       this.$emit('send-close-resetInput')
-//     },
-//     editProductList () {
-//       this.$emit('send-input-data', this.inputData)
-//     },
-//     addImg () {
-//       this.inputData.imagesUrl.push('')
-//     },
-//     deleteImg () {
-//       this.inputData.imagesUrl.pop()
-//     }
-//   },
-//   watch: {
-//     inputProduct: {
-//       handler (newValue, oldValue) {
-//         this.inputData = JSON.parse(JSON.stringify(newValue))
-//       },
-//       deep: true
-//     }
-//   },
-//   mounted () {
-//     this.bsModal = new BsModal(this.$refs.productModal)
-//   }
-// }
 </script>
 <template>
   <div class="modal fade" id="modalInputData" tabindex="-1"  aria-hidden="true" ref="productAdminModalRef">

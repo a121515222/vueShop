@@ -5,7 +5,6 @@ import { mapActions } from 'pinia'
 import apiAdminProducts from '../../assets/adminAPI/apiAdminProduct.js'
 import { onMounted, ref } from 'vue';
 import { useInfoStore } from '../../stores/useInfoStore'
-// import toastStore from '@/stores/toast'
 
 const { getAdminProducts, addAdminProduct, editAdminProduct, deleteAdminProduct } = apiAdminProducts;
 
@@ -33,10 +32,11 @@ const inputProductOut = ref({
 
 
 async function getProducts(page) {
+  isLoading.value = true;
   const res = await getAdminProducts(page);
   products.value = res.data.products;
   pageInfo.value = res.data.pagination;
-
+  isLoading.value = false;
 }
 async function changeAdminProduct(product) {
   if(isNew.value) {
@@ -51,7 +51,6 @@ async function changeAdminProduct(product) {
     );
   } else{
     const res = await editAdminProduct(postId.value ,{ data: product });
-    console.log(res);
     addMessage(
       {
         title: '編輯商品結果',
@@ -59,12 +58,36 @@ async function changeAdminProduct(product) {
         content: `${res.data?.success === true? res.data.message : res.response.data.message}`
       }
     );
+    postId.value = '';
+  }
+  inputProductOut.value = {
+  title: '',
+  category: '',
+  origin_price: null,
+  price: null,
+  unit: '',
+  description: '',
+  content: '',
+  is_enabled: '',
+  imageUrl: '',
+  imagesUrl: []
   }
   getProducts();
   adminProductModalRef.value.modalClose();
 
 }
-
+async function deleteProduct(id) {
+  isLoading.value = true;
+  const res = await deleteAdminProduct(id);
+  addMessage(
+      {
+        title: '刪除商品結果',
+        style: `${res.data?.success === true? 'success':'danger'}`,
+        content: `${res.data?.success === true? res.data.message : res.response.data.message}`
+      }
+    );
+  getProducts();
+}
 
 function openAdminModal(product) {
   adminProductModalRef.value.modalOpen();
@@ -102,192 +125,6 @@ const adminProductModalRef = ref(null);
 onMounted(()=>{
   getProducts();
 })
-
-// export default {
-//   data () {
-//     return {
-//       isLoading: false,
-//       page: {},
-//       isNew: true,
-//       postId: '',
-//       products: [],
-//       productTemp: {},
-//       inputProductOut: {
-//         title: '',
-//         category: '',
-//         origin_price: null,
-//         price: null,
-//         unit: '',
-//         description: '',
-//         content: '',
-//         is_enabled: '',
-//         imageUrl: '',
-//         imagesUrl: []
-//       }
-//     }
-//   },
-//   components: {
-//     AdminProductModal,
-//     PaginationComponent
-//   },
-//   methods: {
-//     // ...mapActions(toastStore, ['addMessage']),
-//     openModal (data) {
-//       this.$refs.myModal.open()
-//       if (this.isNew === false) {
-//         Object.keys(data).forEach((item) => {
-//           Object.keys(this.inputProductOut).forEach((i) => {
-//             if (item === i) {
-//               this.inputProductOut[i] = data[item]
-//             };
-//           })
-//         })
-//         this.postId = data.id
-//       } else {
-//         return
-//       };
-//     },
-//     closeModal () {
-//       this.$refs.myModal.close()
-//     },
-//     showProduct (data) {
-//       this.productTemp = data
-//     },
-//     resetModal () {
-//       this.inputProductOut = {
-//         title: '',
-//         category: '',
-//         origin_price: null,
-//         price: null,
-//         unit: '',
-//         description: '',
-//         content: '',
-//         is_enabled: '',
-//         imageUrl: '',
-//         imagesUrl: []
-//       }
-//     },
-//     editProductList (productData) {
-//       this.isLoading = true
-//       // 新增商品
-//       const sendData = { data: {} }
-//       sendData.data = productData
-//       if (this.isNew === true) {
-//         // this.sendToken()
-//         this.$http.post(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product`, sendData).then((res) => {
-//           this.getProduct()
-//           this.resetModal()
-//           this.isLoading = false
-//           this.addMessage(
-//             {
-//               title: '新增產品結果',
-//               style: 'success',
-//               content: res.data.message
-//             }
-//           )
-//         }).catch((err) => {
-//           this.addMessage(
-//             {
-//               title: '新增產品結果',
-//               style: 'danger',
-//               content: err.response.data.message
-//             }
-//           )
-//         })
-//       } else if (this.isNew === false) {
-//         this.$http.put(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product/${this.postId}`, sendData).then((res) => {
-//           this.getProduct()
-//           this.closeModal()
-//           this.isLoading = false
-//           this.addMessage(
-//             {
-//               title: '編輯產品結果',
-//               style: 'success',
-//               content: res.data.message
-//             }
-//           )
-//           this.postId = ''
-//         }).catch((err) => {
-//           console.dir(err.response)
-//           this.isLoading = false
-//           this.addMessage(
-//             {
-//               title: '新增產品結果',
-//               style: 'danger',
-//               content: err.response.data.message
-//             }
-//           )
-//         })
-//       }
-//     },
-//     deleteProduct () {
-//       this.isLoading = true
-//       const confirm = prompt('請輸入delete')
-//       if (confirm === 'delete') {
-//         this.$http.delete(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/product/${this.postId}`).then((res) => {
-//           this.getProduct()
-//           this.isLoading = false
-//           this.addMessage(
-//             {
-//               title: '刪除產品結果',
-//               style: 'success',
-//               content: res.data.message
-//             }
-//           )
-//         }).catch((err) => {
-//           this.isLoading = false
-//           this.addMessage(
-//             {
-//               title: '刪除產品結果',
-//               style: 'danger',
-//               content: err.response.data.message
-//             }
-//           )
-//         })
-//       } else {
-//         alert('輸入錯誤，不進行刪除')
-//         this.isLoading = false
-//       }
-//     },
-//     productStatus (data) {
-//       let result = null
-//       switch (data) {
-//         case 0: result = '未上架'
-//           break
-//         case 1: result = '已上架'
-//           break
-//         case 2: result = '缺貨中'
-//           break
-//         case 3: result = '補貨中'
-//           break
-//         case 4: result = '促銷中'
-//           break
-//         case 5: result = '待下架'
-//           break
-//       };
-//       return result
-//     },
-//     getProduct (page = 1) {
-//       this.isLoading = true
-//       if (this.$route.fullPath === '/admin/adminProducts') {
-//         this.$http.get(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`).then((res) => {
-//           this.products = res.data.products
-//           this.page = res.data.pagination
-//           this.isLoading = false
-//         }).catch((err) => {
-//           this.isLoading = false
-//           alert(`${err.response.data.message},自動轉跳至登入頁`)
-//           if (err.response.data.message === '驗證錯誤, 請重新登入') {
-//             this.$router.push('/logIn')
-//           }
-//         })
-//       }
-//     }
-//   },
-//   mounted () {
-//     this.getProduct()
-//   }
-// }
 </script>
 
 <template>
@@ -345,7 +182,7 @@ onMounted(()=>{
                 <button class="btn btn-outline-danger" type="button"
                 :disabled="isLoading === true"
                 :class="{'buttonDisabledCursor' : isLoading === true}"
-                @click="postId = item.id; deleteProduct();"
+                @click="; deleteProduct(item.id);"
                 >
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
                   v-if="isLoading"></span>
@@ -399,7 +236,6 @@ onMounted(()=>{
     :input-product="inputProductOut"
     :is-new="isNew"
     @send-input-data="changeAdminProduct"
-    @send-close-resetInput="resetModal"
     />
   </div>
 </template>
