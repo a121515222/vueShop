@@ -75,7 +75,14 @@ const router = createRouter({
       name: 'DashBoard',
       component: () => import('../views/admin/DashBoardView.vue'),
       meta: { title: 'DashBoard' },
-      children: []
+      children: [
+        {
+          path: 'adminProducts',
+          name: 'AdminProducts',
+          component: () => import('../views/admin/AdminProductView.vue'),
+          meta: { title: 'AdminProducts' }
+        },
+      ]
     },
     {
       path: '/:matchPath(.*)*',

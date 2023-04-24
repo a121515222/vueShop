@@ -21,6 +21,7 @@ async function logInspection() {
   const res = await loginCheck(myToken);
   if(res.data?.success) {
     isLoadingPage.value = false;
+    logInResult.value = true;
   } else if(res.response.data.success === false) {
     isLoadingPage.value = false;
     alert('請重新登入');
