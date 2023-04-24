@@ -1,112 +1,206 @@
-<script>
+<script setup>
 import BsModal from 'bootstrap/js/dist/modal'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { mapActions } from 'pinia'
-// import toastStore from '@/stores/toast'
+import { onMounted, ref, watch } from 'vue';
+import apiUploadPicture from '../../assets/adminAPI/apiAdminUploadPicture.js'
+import { useInfoStore } from '../../stores/useInfoStore';
 
-export default {
-  props: ['inputProduct', 'isNew'],
-  data () {
-    return {
-      inputData: {
-        imagesUrl: []
-      },
-      bsModal: '',
-      isLoading: false,
-      editor: ClassicEditor,
-      editorConfig: {
-        toolbar: ['heading', 'bold', 'italic', '|', 'link']
-      }
+const { pictureUpload } = apiUploadPicture;
+const { addMessage } = useInfoStore();
+
+
+const props = defineProps(['inputProduct', 'isNew']);
+const emits = defineEmits(['sendInputData', 'sendCloseResetInput']);
+const productAdminModalRef = ref(null);
+const upLoadFileRef = ref(null);
+const bsModal = ref(null);
+const isLoading = ref(false);
+
+const editor = ClassicEditor;
+const editorConfig = {
+  toolbar: ['heading', 'bold', 'italic', '|', 'link']
+}
+
+const inputData = ref({
+  title: '',
+  category: '',
+  origin_price: null,
+  price: null,
+  unit: '',
+  description: '',
+  content: '',
+  is_enabled: '',
+  imageUrl: '',
+  imagesUrl: []
+});
+
+defineExpose({
+  modalOpen,
+  modalClose
+})
+
+watch(()=>props.inputProduct, (newValue, oldValue)=>{
+  inputData.value = newValue
+},{deep:true})
+
+function modalOpen(){
+  bsModal.value.show();
+}
+function modalClose(){
+  bsModal.value.hide();
+}
+function sendProductInput() {
+  emits('sendInputData',inputData.value);
+  inputData.value = {
+  title: '',
+  category: '',
+  origin_price: null,
+  price: null,
+  unit: '',
+  description: '',
+  content: '',
+  is_enabled: '',
+  imageUrl: '',
+  imagesUrl: []
+}
+}
+async function uploadImg() {
+  isLoading.value = true;
+  const uploadFile = upLoadFileRef.value.files[0];
+  const formData = new FormData();
+  formData.append('file-to-upload', uploadFile);
+  const res = await pictureUpload(formData);
+  addMessage(
+    {
+      title: '上傳圖片結果',
+      style: `${res.data?.success === true? 'success':'danger'}`,
+      content: `${res.data?.success === true? '已成功上傳': res.response.data.message}`
     }
-  },
-  emits: ['send-input-data', 'send-close-resetInput'],
-  methods: {
-    // ...mapActions(toastStore, ['addMessage']),
-    uploadImg () {
-      this.isLoading = true
-      const uploadFile = this.$refs.upLoadFile.files[0]
-      const formData = new FormData()
-      formData.append('file-to-upload', uploadFile)
-      this.$http.post(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/upload`, formData)
-        .then((res) => {
-          if (this.inputData.imageUrl === undefined || '') {
-            this.inputData.imageUrl = res.data.imageUrl
-          } else if (this.inputData.imageUrl !== '' && this.inputData.imagesUrl.length < 6) {
-            if (this.inputData.imagesUrl.length < 6) {
-              this.inputData.imagesUrl.push(res.data.imageUrl)
-            }
-          }
-          this.isLoading = false
-          this.addMessage(
-            {
-              title: '上傳圖片結果',
-              style: 'success',
-              content: '上傳成功'
-            }
-          )
-          this.$refs.upLoadFile.value = ''
-        })
-        .catch((err) => {
-          this.isLoading = false
-          console.dir(err)
-          if (this.inputData.imagesUrl.length === 5) {
-            this.addMessage(
-              {
-                title: '上傳圖片結果',
-                style: 'danger',
-                content: '上傳失敗，已達最大上傳圖片數'
-              }
-            )
-          } else {
-            this.addMessage(
-              {
-                title: '上傳圖片結果',
-                style: 'danger',
-                content: '上傳失敗'
-              }
-            )
-          }
-        })
-    },
-    open () {
-      this.bsModal.show()
-    },
-    close () {
-      this.bsModal.hide()
-      // 每次關閉都會重製外層的inputProductout
-      this.$emit('send-close-resetInput')
-    },
-    editProductList () {
-      this.$emit('send-input-data', this.inputData)
-    },
-    addImg () {
-      this.inputData.imagesUrl.push('')
-    },
-    deleteImg () {
-      this.inputData.imagesUrl.pop()
+  );
+  if(res.data.success) {
+    console.log('test')
+    if(inputData.value.imageUrl === '') {
+      inputData.value.imageUrl = res.data.imageUrl;
+    } else if(inputData.value.imagesUrl.length< 6) {
+      inputData.value.imagesUrl.push(res.data.imageUrl);
     }
-  },
-  watch: {
-    inputProduct: {
-      handler (newValue, oldValue) {
-        this.inputData = JSON.parse(JSON.stringify(newValue))
-      },
-      deep: true
-    }
-  },
-  mounted () {
-    this.bsModal = new BsModal(this.$refs.productModal)
+    isLoading.value = false;
   }
 }
+function addImg() {
+  inputData.value.imagesUrl.push('');
+}
+function deleteImg() {
+  inputData.value.imagesUrl.length === 0 ?   inputData.value.imageUrl = '' : inputData.value.imagesUrl.pop() ;
+}
+onMounted(()=>{
+  bsModal.value = new BsModal(productAdminModalRef.value);
+})
+// import toastStore from '@/stores/toast'
+
+// export default {
+//   props: ['inputProduct', 'isNew'],
+//   data () {
+//     return {
+//       inputData: {
+//         imagesUrl: []
+//       },
+//       bsModal: '',
+//       isLoading: false,
+//       editor: ClassicEditor,
+//       editorConfig: {
+//         toolbar: ['heading', 'bold', 'italic', '|', 'link']
+//       }
+//     }
+//   },
+//   emits: ['send-input-data', 'send-close-resetInput'],
+//   methods: {
+//     // ...mapActions(toastStore, ['addMessage']),
+//     uploadImg () {
+//       this.isLoading = true
+//       const uploadFile = this.$refs.upLoadFile.files[0]
+//       const formData = new FormData()
+//       formData.append('file-to-upload', uploadFile)
+//       this.$http.post(`${process.env.VUE_APP_API}/api/${process.env.VUE_APP_PATH}/admin/upload`, formData)
+//         .then((res) => {
+//           if (this.inputData.imageUrl === undefined || '') {
+//             this.inputData.imageUrl = res.data.imageUrl
+//           } else if (this.inputData.imageUrl !== '' && this.inputData.imagesUrl.length < 6) {
+//             if (this.inputData.imagesUrl.length < 6) {
+//               this.inputData.imagesUrl.push(res.data.imageUrl)
+//             }
+//           }
+//           this.isLoading = false
+//           this.addMessage(
+//             {
+//               title: '上傳圖片結果',
+//               style: 'success',
+//               content: '上傳成功'
+//             }
+//           )
+//           this.$refs.upLoadFile.value = ''
+//         })
+//         .catch((err) => {
+//           this.isLoading = false
+//           console.dir(err)
+//           if (this.inputData.imagesUrl.length === 5) {
+//             this.addMessage(
+//               {
+//                 title: '上傳圖片結果',
+//                 style: 'danger',
+//                 content: '上傳失敗，已達最大上傳圖片數'
+//               }
+//             )
+//           } else {
+//             this.addMessage(
+//               {
+//                 title: '上傳圖片結果',
+//                 style: 'danger',
+//                 content: '上傳失敗'
+//               }
+//             )
+//           }
+//         })
+//     },
+//     open () {
+//       this.bsModal.show()
+//     },
+//     close () {
+//       this.bsModal.hide()
+//       // 每次關閉都會重製外層的inputProductout
+//       this.$emit('send-close-resetInput')
+//     },
+//     editProductList () {
+//       this.$emit('send-input-data', this.inputData)
+//     },
+//     addImg () {
+//       this.inputData.imagesUrl.push('')
+//     },
+//     deleteImg () {
+//       this.inputData.imagesUrl.pop()
+//     }
+//   },
+//   watch: {
+//     inputProduct: {
+//       handler (newValue, oldValue) {
+//         this.inputData = JSON.parse(JSON.stringify(newValue))
+//       },
+//       deep: true
+//     }
+//   },
+//   mounted () {
+//     this.bsModal = new BsModal(this.$refs.productModal)
+//   }
+// }
 </script>
 <template>
-  <div class="modal fade" id="modalInputData" tabindex="-1"  aria-hidden="true" ref="productModal">
+  <div class="modal fade" id="modalInputData" tabindex="-1"  aria-hidden="true" ref="productAdminModalRef">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">{{isNew?"新增產品":"編輯產品"}}</h5>
           <button class="btn-close" type="button"
-          @click="close()">
+          @click="modalClose()">
           </button>
         </div>
         <div class="modal-body">
@@ -120,10 +214,10 @@ export default {
                   >
                   </span>
                 </label>
-                <input class="form-control" type="file" name="file-to-upload" ref="upLoadFile"
-                :disabled="isLoading || inputData.imagesUrl?.length === 5"
+                <input class="form-control" type="file" name="file-to-upload" ref="upLoadFileRef"
+                :disabled="isLoading || inputData.imagesUrl?.length === 5 && inputData.imageUrl !== ''"
                 @change="uploadImg"
-                :class="{buttonDisabledCursor : isLoading || inputData.imagesUrl?.length === 5}"
+                :class="{buttonDisabledCursor : isLoading || inputData.imagesUrl?.length === 5 && inputData.imageUrl !== ''}"
                 >
               </div>
               <div><img class="img-fluid"
@@ -162,7 +256,7 @@ export default {
                 新增圖片
               </button>
               <button class="btn btn-outline-danger w-100 d-block"
-              v-if="inputData.imagesUrl?.length > 1"
+              v-if="inputData.imagesUrl?.length >= 1 || inputData.imageUrl !== ''"
               @click="deleteImg()"
               >
                 刪除圖片
@@ -246,7 +340,7 @@ export default {
               關閉
             </button>
             <button class="btn btn-primary" type="button"
-            @click="editProductList()"
+            @click="sendProductInput()"
             >
               確定
             </button>

@@ -4,18 +4,99 @@ import AdminProductModal from '../../components/admin/AdminProductModal.vue'
 import { mapActions } from 'pinia'
 import apiAdminProducts from '../../assets/adminAPI/apiAdminProduct.js'
 import { onMounted, ref } from 'vue';
+import { useInfoStore } from '../../stores/useInfoStore'
 // import toastStore from '@/stores/toast'
 
 const { getAdminProducts, addAdminProduct, editAdminProduct, deleteAdminProduct } = apiAdminProducts;
 
+const infoStore = useInfoStore();
+const { addMessage } = infoStore;
+
+const isLoading = ref(false);
 const products = ref([]);
 const productTemp = ref({});
+const pageInfo = ref({});
+const isNew = ref(false);
+const postId = ref('');
+const inputProductOut = ref({
+  title: '',
+  category: '',
+  origin_price: null,
+  price: null,
+  unit: '',
+  description: '',
+  content: '',
+  is_enabled: '',
+  imageUrl: '',
+  imagesUrl: []
+});
 
 
+async function getProducts(page) {
+  const res = await getAdminProducts(page);
+  products.value = res.data.products;
+  pageInfo.value = res.data.pagination;
+
+}
+async function changeAdminProduct(product) {
+  console.log('changeAdminProduct',product);
+  if(isNew) {
+    const res = await addAdminProduct({ data: product });
+    console.log(res)
+    isNew.value = false;
+    addMessage(
+      {
+        title: `${res.data?.success === true? '新增商品成功':'新增商品失敗'}`,
+        style: `${res.data?.success === true? 'success':'danger'}`,
+        content: `${res.data?.success === true? res.data.message : res.response.data.message.join()}`
+      }
+    );
+
+  } else{
+    const res = await editAdminProduct(id ,{ data: product });
+    
+  }
+  getProducts();
+  adminProductModalRef.value.modalClose();
+
+}
+
+
+function openAdminModal(product) {
+  adminProductModalRef.value.modalOpen();
+  if( isNew.value !== true) {
+    Object.keys(inputProductOut.value).forEach(key => {
+      inputProductOut.value[key] = product[key];
+    });
+    console.log(inputProductOut.value);
+  } else {
+    adminProductModalRef.value.modalOpen();
+  }
+}
+function showProduct (product) {
+  productTemp.value = product;
+}
+
+function productStatus (data) {
+  switch (data) {
+    case 0: 
+    return '未上架'
+    case 1: 
+    return '已上架'
+    case 2: 
+    return '缺貨中'
+    case 3: 
+    return '補貨中'
+    case 4:
+    return '促銷中'
+    case 5: 
+    return '待下架'
+  };
+}
+const adminProductModalRef = ref(null);
 
 onMounted(()=>{
-  getAdminProducts();
-  console.log('123')
+  getProducts();
 })
 
 // export default {
@@ -213,7 +294,7 @@ onMounted(()=>{
       <div class="d-flex justify-content-end">
         <!-- Button trigger modal -->
         <button class="btn btn-primary" type="button"
-        @click="isNew = true;openModal();">
+        @click="isNew = true;openAdminModal();">
           增加商品
         </button>
       </div>
@@ -248,7 +329,7 @@ onMounted(()=>{
               <td>
                 <button class="btn btn-outline-success"  type="button"
                 :data-index="index"
-                @click="postId = item.id;isNew= false;openModal(item);"
+                @click="postId = item.id;isNew= false;openAdminModal(item);"
                 :disabled="isLoading === true"
                 :class="{'buttonDisabledCursor' : isLoading === true}">
                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
@@ -271,7 +352,7 @@ onMounted(()=>{
           </table>
           <p class="px-1">一共有{{products.length}}項產品</p>
         </div>
-        <PaginationComponent :pagination="page" @send-page="getProduct"/>
+        <PaginationComponent :pagination="pageInfo" @send-page="getProducts"/>
       </div>
       <h2>單一產品細節</h2>
       <div class="col-8 mx-auto py-3">
@@ -310,10 +391,10 @@ onMounted(()=>{
       </div>
     </div>
     <!-- Modal -->
-    <AdminProductModal  ref="myModal"
+    <AdminProductModal  ref="adminProductModalRef"
     :input-product="inputProductOut"
     :is-new="isNew"
-    @send-input-data="editProductList"
+    @send-input-data="changeAdminProduct"
     @send-close-resetInput="resetModal"
     />
   </div>
