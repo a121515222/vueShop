@@ -39,10 +39,8 @@ async function getProducts(page) {
 
 }
 async function changeAdminProduct(product) {
-  console.log('changeAdminProduct',product);
-  if(isNew) {
+  if(isNew.value) {
     const res = await addAdminProduct({ data: product });
-    console.log(res)
     isNew.value = false;
     addMessage(
       {
@@ -51,10 +49,16 @@ async function changeAdminProduct(product) {
         content: `${res.data?.success === true? res.data.message : res.response.data.message.join()}`
       }
     );
-
   } else{
-    const res = await editAdminProduct(id ,{ data: product });
-    
+    const res = await editAdminProduct(postId.value ,{ data: product });
+    console.log(res);
+    addMessage(
+      {
+        title: '編輯商品結果',
+        style: `${res.data?.success === true? 'success':'danger'}`,
+        content: `${res.data?.success === true? res.data.message : res.response.data.message}`
+      }
+    );
   }
   getProducts();
   adminProductModalRef.value.modalClose();
