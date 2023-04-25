@@ -1,0 +1,61 @@
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+i {
+  font-style: normal;
+}
+
+img {
+  max-width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.active {
+  color: #fff !important;
+}
+
+.no-warp {
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .flex-md-row-cross {
+    display: flex !important;
+  }
+  .flex-md-row-cross:nth-child(even) {
+    flex-direction: row-reverse !important;
+  }
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:disabled {
+  color: #fff;
+}
+
+.btn-primary, .btn-secondary, .btn-third {
+  color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:disabled, .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:disabled, .btn-third:hover, .btn-third:focus, .btn-third:disabled {
+  color: #fff;
+}
+
+.cardHover {
+  background: #fff;
+  transition: all 0.5s;
+}
+.cardHover img {
+  opacity: 1;
+}
+.cardHover:hover {
+  background: #F2F2F2;
+  opacity: 0.8;
+}
+
+.card-foot {
+  padding: 0.5rem 1rem;
+}/*# sourceMappingURL=base.css.map */

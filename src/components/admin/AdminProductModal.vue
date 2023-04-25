@@ -37,10 +37,10 @@ const inputData = ref({
 defineExpose({
   modalOpen,
   modalClose
-})
+});
 
 watch(()=>props.inputProduct, (newValue, oldValue)=>{
-  inputData.value = newValue
+  inputData.value = newValue;
 },{deep:true})
 
 function modalOpen(){

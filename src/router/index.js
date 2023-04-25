@@ -82,6 +82,12 @@ const router = createRouter({
           component: () => import('../views/admin/AdminProductView.vue'),
           meta: { title: 'AdminProducts' }
         },
+        {
+          path: 'adminArticles',
+          name: 'AdminArticles',
+          component: () => import('../views/admin/AdminArticleView.vue'),
+          meta: { title: 'AdminArticles' }
+        },
       ]
     },
     {

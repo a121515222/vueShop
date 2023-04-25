@@ -41,6 +41,7 @@ async function getProducts(page) {
 async function changeAdminProduct(product) {
   if(isNew.value) {
     const res = await addAdminProduct({ data: product });
+
     isNew.value = false;
     addMessage(
       {
@@ -50,7 +51,7 @@ async function changeAdminProduct(product) {
       }
     );
   } else{
-    const res = await editAdminProduct(postId.value ,{ data: product });
+    const res = await editAdminProduct(postId.value, { data: product });
     addMessage(
       {
         title: '編輯商品結果',
