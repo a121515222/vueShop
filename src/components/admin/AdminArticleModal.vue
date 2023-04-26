@@ -1,14 +1,18 @@
 <script setup>
-import BsModal from 'bootstrap/js/dist/modal'
-import SwitchClick from '../SwitchClick.vue'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { computed, onMounted, ref, watch } from 'vue';
-
+import BsModal from 'bootstrap/js/dist/modal';
+import SwitchClick from '../SwitchClick.vue';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { onMounted, ref, watch } from 'vue';
+import apiUploadPicture from '../../assets/adminAPI/apiAdminUploadPicture.js';
+import { useInfoStore } from '../../stores/useInfoStore';
 defineExpose({
   modalOpen,
   modalClose
 });
-
+const upLoadFileRef = ref(null);
+const isLoading = ref(false);
+const { pictureUpload } = apiUploadPicture;
+const { addMessage } = useInfoStore();
 const props = defineProps(['inputArticle', 'isNew']);
 const emits = defineEmits(['sendArticle']);
 const articleAdminModalRef = ref(null);
@@ -79,7 +83,7 @@ function addTag() {
   } else {
     article.value.tag.push(tempTag.value)
   }
-  tempTag.value = ''
+  tempTag.value = '';
 }
 function deleteTag(index) {
   this.article.value.tag.splice(index, 1)
@@ -94,87 +98,29 @@ function getTime(time) {
       return new Date(time * 1000).toISOString().split('T')[0]  
   }
 }
+async function uploadImg() {
+  isLoading.value = true;
+  const uploadFile = upLoadFileRef.value.files[0];
+  const formData = new FormData();
+  formData.append('file-to-upload', uploadFile);
+  const res = await pictureUpload(formData);
+  addMessage(
+    {
+      title: '上傳圖片結果',
+      style: `${res.data?.success === true? 'success':'danger'}`,
+      content: `${res.data?.success === true? '已成功上傳': res.response.data.message}`
+    }
+  );
+  if(res.data.success) {
+    if(article.value.image === '') {
+      article.value.image = res.data.imageUrl;
+    }
+    isLoading.value = false;
+  }
+}
 onMounted(()=>{
   bsModal.value = new BsModal(articleAdminModalRef.value);
 })
-// export default {
-//   props: ['getArticle', 'isNew'],
-//   data () {
-//     return {
-//       bsModal: '',
-//       isLoading: false,
-//       article: {
-//         tag: [],
-//         isPublic: false
-//       },
-//       editor: ClassicEditor,
-//       editorConfig: {
-//         toolbar: ['heading', 'bold', 'italic', '|', 'link']
-//       },
-//       tempTag: ''
-//     }
-//   },
-//   components: {
-//     SwitchClick
-//   },
-//   watch: {
-//     getArticle: {
-//       handler (nweValue) {
-//         this.article = JSON.parse(JSON.stringify(nweValue))
-//         this.article.create_at = this.getTime(this.article.create_at)
-//       },
-//       deep: true
-//     }
-//   },
-//   methods: {
-//     addTag () {
-//       if (this.article.tag === '') {
-//         this.article.tag = []
-//         this.article.tag.push(this.tempTag)
-//       } else {
-//         this.article.tag.push(this.tempTag)
-//       }
-//       this.tempTag = ''
-//     },
-//     deleteTag (index) {
-//       this.article.tag.splice(index, 1)
-//     },
-//     getTime (time) {
-//       const theDate = new Date(time * 1000).toISOString().split('T')
-//       return theDate[0]
-//     },
-//     editArticle () {
-//       this.$emit('sendArticle', this.article)
-//     },
-//     getActive (data) {
-//       if (data === 1) {
-//         this.article.isPublic = true
-//       } else if (data === 0) {
-//         this.article.isPublic = false
-//       }
-//     },
-//     openModal () {
-//       this.bsModal.show()
-//     },
-//     closeModal () {
-//       this.article = {
-//         title: '',
-//         description: '',
-//         image: '',
-//         tag: '',
-//         create_at: null,
-//         author: '',
-//         isPublic: false,
-//         content: ''
-//       }
-//       this.bsModal.hide()
-//     }
-//   },
-//   mounted () {
-//     this.bsModal = new BsModal(this.$refs.articleModal)
-//   }
-// }
-//https://storage.googleapis.com/vue-course-api.appspot.com/chun-chia/1650724854450.jpg?GoogleAccessId=firebase-adminsdk-zzty7%40vue-course-api.iam.gserviceaccount.com&Expires=1742169600&Signature=TsvnPJ64c3CD%2Fwd4NXwM1S1nk9d%2BGLsR0l%2FJGRRWQXJhfpvKpHlhYfrh2OfoS6ep5q44niwKY9qD8vCFvBA%2FLS9LHrsJk0u7BCVDMAJ3AtI%2B3OakP%2BuNDq1BAd0OmK8zhMI6ztEx%2FwJn3RQflmHWTwBdiWzspm1rFbP96TBSIac9c2CeH5vY5UZw%2BTlEoL0NsfygwdX5FszGvFdVk3dqKTJM9hud%2BZPYv%2BdJM3SqHrYgu6uLwbCQXEjSjWQt28oct1PmsYhlkXDLduX7%2Fwj09ooNowjEjgBgQBMuxmCESPTwP85FI3BfRWkWhJuMHVvf4Jd4pUH4kTGpvu2fFM9crw%3D%3D
 </script>
 <template>
   <div class="modal fade" ref="articleAdminModalRef" id="articleModal" tabindex="-1" aria-hidden="true">
@@ -210,6 +156,14 @@ onMounted(()=>{
               <label for="articleImg" class="form-label">文章圖片</label>
               <input class="form-control" type="text" id="articleImg" placeholder="請輸入圖片網址"
               v-model="article.image">
+            </div>
+            <div class="from-group py-2">
+              <label for="articleImg" class="form-label">上傳圖片</label>
+              <input class="form-control" type="file" id="uploadImg" ref="upLoadFileRef"
+              :disabled="article?.image !== ''"
+              :class="{buttonDisabledCursor : article?.image !== ''}"
+              @change="uploadImg"
+              >
             </div>
             <div class="from-group py-2 d-flex gap-3">
               <label for="articleIsEnable" class="form-label">文章發布</label>

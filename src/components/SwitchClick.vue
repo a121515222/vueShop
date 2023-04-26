@@ -15,32 +15,7 @@ function activeChange() {
 onMounted(()=>{
   active.value = props.enabled || 0;
 });
-// export default {
-//   props: ['info', 'enabled'],
-//   data () {
-//     return {
-//       active: 0
-//     }
-//   },
-//   methods: {
-//     activeChange () {
-//       if (this.active === 0) {
-//         this.active = 1
-//       } else if (this.active === 1) {
-//         this.active = 0
-//       }
-//     }
-//   },
-//   watch: {
-//     enabled (newValue) {
-//       this.active = newValue
-//     }
-//   },
-//   mounted () {
-//     // 當開啟新增優惠券時this.enabled為undefined所以加上||0
-//     this.active = this.enabled || 0
-//   }
-// }
+
 </script>
 <template>
   <div class="switch">

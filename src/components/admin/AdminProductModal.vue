@@ -78,7 +78,6 @@ async function uploadImg() {
     }
   );
   if(res.data.success) {
-    console.log('test')
     if(inputData.value.imageUrl === '') {
       inputData.value.imageUrl = res.data.imageUrl;
     } else if(inputData.value.imagesUrl.length< 6) {
